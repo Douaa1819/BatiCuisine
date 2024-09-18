@@ -5,7 +5,7 @@ import java.util.InputMismatchException;
 
 public class ValidationUtils {
 
-    private static final Scanner scanner = new Scanner(System.in);
+    public static final Scanner scanner = new Scanner(System.in);
 
     /**
      * Lit une chaîne de caractères depuis l'entrée utilisateur.
@@ -13,7 +13,12 @@ public class ValidationUtils {
      * @return La chaîne de caractères entrée par l'utilisateur.
      */
     public static String readString() {
-        return scanner.nextLine().trim();
+        String input = scanner.nextLine();
+        while (input == null || input.trim().isEmpty()) {
+            System.out.println("Erreur : l'entrée ne doit pas être vide. Veuillez entrer une valeur.");
+            input = scanner.nextLine();
+        }
+        return input;
     }
 
     /**
@@ -40,14 +45,11 @@ public class ValidationUtils {
      * @return Le double entré par l'utilisateur.
      */
     public static double readDouble() {
-        while (true) {
-            try {
-                return scanner.nextDouble();
-            } catch (InputMismatchException e) {
-                System.out.println("Veuillez entrer un nombre décimal valide.");
-                scanner.next(); // Consomme la valeur invalide
-            }
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Erreur : veuillez entrer un nombre valide.");
+            scanner.next();
         }
+        return scanner.nextDouble();
     }
 
     /**
@@ -58,6 +60,18 @@ public class ValidationUtils {
      */
     public static boolean isNullOrEmpty(String input) {
         return input == null || input.trim().isEmpty();
+    }
+
+    public static String readValidName() {
+        String input = scanner.nextLine();
+        while (!isValidName(input)) {
+            System.out.println("Erreur : le nom ne doit contenir que des lettres. Veuillez réessayer.");
+            input = scanner.nextLine();
+        }
+        return input;
+    }
+    private static boolean isValidName(String input) {
+        return input != null && input.matches("[a-zA-Z\\s]+");
     }
 
     /**

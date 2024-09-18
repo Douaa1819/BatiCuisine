@@ -9,5 +9,4 @@ public class Client {
     private String phone;
     private boolean estProfessionnel;
 
-
 }
