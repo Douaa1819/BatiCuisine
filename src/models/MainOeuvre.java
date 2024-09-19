@@ -9,8 +9,12 @@ public class MainOeuvre extends Composant {
     private double productiviteOuvrier;
 
 
-    public MainOeuvre(UUID id, String nom, double tva, TypeComposant typeComposant, UUID projetId) {
+    public MainOeuvre(UUID id, String nom, double tva, TypeComposant typeComposant, UUID projetId,
+                      double tauxHoraire, double heuresTravail, double productiviteOuvrier) {
         super(id, nom, tva, typeComposant, projetId);
+        this.tauxHoraire = tauxHoraire;
+        this.heuresTravail = heuresTravail;
+        this.productiviteOuvrier = productiviteOuvrier;
     }
 
     public double getTauxHoraire() {

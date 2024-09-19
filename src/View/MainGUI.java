@@ -1,18 +1,38 @@
 package View;
+import Services.impl.MainOeuvreServiceImpl;
+import Services.impl.MateriauxServiceImpl;
+import Services.impl.ProjetServiceImpl;
 import Services.interfaces.ClientService;
+import Services.interfaces.MainOeuvreService;
+import Services.interfaces.MateriauxService;
+import Services.interfaces.ProjetService;
+import enums.EtatProjet;
 import models.Client;
+import models.MainOeuvre;
+import models.Materiaux;
+import models.Projet;
 import utils.ValidationUtils;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+
+import static enums.TypeComposant.MAIN_D_OEUVRE;
+import static enums.TypeComposant.MATERIAUX;
 
 public class MainGUI {
 
     private static ClientService clientService;
-
-    public MainGUI(ClientService clientService) {
+    private static MateriauxService materiauxService ;
+    private static MainOeuvreService mainOeuvreService ;
+    public MainGUI(ClientService clientService,MateriauxService materiauxService,MainOeuvreService mainOeuvreService) {
         this.clientService = clientService;
+        this.materiauxService = materiauxService;
+        this.mainOeuvreService = mainOeuvreService;
     }
+
+
+
 
     public static void afficherMenuPrincipal() {
         System.out.println("=== Bienvenue dans l'application de gestion des projets de rénovation de cuisines ===");
@@ -41,7 +61,7 @@ public class MainGUI {
                     calculerCoutProjet();
                     break;
                 case 4:
-                    afficherClients();
+//                    afficherClients();
                     break;
 
                 case 5:
@@ -73,8 +93,11 @@ public class MainGUI {
                 break;
             default:
                 System.out.println("Veuillez choisir une option valide.");
+                creerNouveauProjet();
         }
+
     }
+
 
     public static void rechercherClient() {
         System.out.println("\n--- Recherche de client existant ---");
@@ -109,33 +132,37 @@ public class MainGUI {
             Client client = new Client(UUID.randomUUID(), nomClient, adresseClient, numeroTelephone, false);
             Client createdClient = clientService.createClient(client);
 
-            // Affiche les détails du client ajouté
             System.out.println("Nouveau client ajouté avec succès !");
             System.out.println("Nom: " + createdClient.getNom());
             System.out.println("Adresse: " + createdClient.getAdress());
             System.out.println("Téléphone: " + createdClient.getPhone());
-            System.out.println("ID: " + createdClient.getId()); // Affiche l'ID du client créé
-
+            System.out.println("ID: " + createdClient.getId());
+            System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
+            String reponse = ValidationUtils.readString();
+            if ("y".equalsIgnoreCase(reponse)) {
+                creerProjetPourClient(createdClient.getNom());
+            }
         } catch (Exception e) {
             System.out.println("Erreur lors de l'ajout du client : " + e.getMessage());
-            e.printStackTrace(); // Affiche la trace de l'exception pour plus d'informations
+            e.printStackTrace();
         }
+
     }
-    public static void afficherClients() {
-        System.out.println("\n--- Affichage des clients ---");
-        List<Client> clients = clientService.getAllClients();
-        if (clients.isEmpty()) {
-            System.out.println("Aucun client trouvé.");
-        } else {
-            for (Client client : clients) {
-                System.out.println("ID: " + client.getId());
-                System.out.println("Nom: " + client.getNom());
-                System.out.println("Adresse: " + client.getAdress());
-                System.out.println("Téléphone: " + client.getPhone());
-                System.out.println();
-            }
-        }
-    }
+//    public static void afficherClients() {
+//        System.out.println("\n--- Affichage des clients ---");
+//        List<Client> clients = clientService.getAllClients();
+//        if (clients.isEmpty()) {
+//            System.out.println("Aucun client trouvé.");
+//        } else {
+//            for (Client client : clients) {
+//                System.out.println("ID: " + client.getId());
+//                System.out.println("Nom: " + client.getNom());
+//                System.out.println("Adresse: " + client.getAdress());
+//                System.out.println("Téléphone: " + client.getPhone());
+//                System.out.println();
+//            }
+//        }
+//    }
 
 
 
@@ -147,13 +174,23 @@ public class MainGUI {
         double surfaceCuisine = ValidationUtils.readDouble();
 
         ajouterMateriaux();
+        ajouterMainOeuvre();
+        Projet projet = new Projet(UUID.randomUUID(), nomProjet, surfaceCuisine, 0.0, 0.0, EtatProjet.ENCOURS, 0.0, UUID.randomUUID());
+        ProjetService projetService = new ProjetServiceImpl();
+
+        try {
+            projetService.ajouterProjet(projet);
+            System.out.println("Projet créé avec succès !");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la création du projet : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
 
     public static void ajouterMateriaux() {
         System.out.println("\n--- Ajout des matériaux ---");
-        boolean ajouterAutre = true;
-
-        while (ajouterAutre) {
+        while (true) {
             System.out.print("Entrez le nom du matériau : ");
             String nomMateriau = ValidationUtils.readString();
             System.out.print("Entrez la quantité de ce matériau : ");
@@ -162,38 +199,55 @@ public class MainGUI {
             double coutUnitaire = ValidationUtils.readDouble();
             System.out.print("Entrez le coût de transport de ce matériau (€) : ");
             double coutTransport = ValidationUtils.readDouble();
-            System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.0 = haute qualité) : ");
+            System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
             double coefficientQualite = ValidationUtils.readDouble();
+            try {
+                Materiaux materiaux = new Materiaux(UUID.randomUUID(), nomMateriau, 20.0, MATERIAUX, UUID.randomUUID(), coutUnitaire, quantite, coutTransport, coefficientQualite);
+                materiauxService.ajouterMateriaux(materiaux);
+                System.out.println("Matériau ajouté avec succès !");
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            }
 
-            System.out.println("Matériau ajouté avec succès !");
             System.out.print("Voulez-vous ajouter un autre matériau ? (y/n) : ");
-            ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
+            String reponse = ValidationUtils.readString();
+            if (!reponse.equalsIgnoreCase("y")) {
+                ajouterMainOeuvre();
+                break;
+            }
         }
-
-        ajouterMainDoeuvre();
     }
 
-    public static void ajouterMainDoeuvre() {
+
+    public static void ajouterMainOeuvre() {
         System.out.println("\n--- Ajout de la main-d'œuvre ---");
         boolean ajouterAutre = true;
 
         while (ajouterAutre) {
-            System.out.print("Entrez le type de main-d'œuvre : ");
-            String typeMainDoeuvre = ValidationUtils.readString();
+            System.out.print("Entrez le nom du mmain-d'œuvre : ");
+            String nomMainDoeuvre = ValidationUtils.readString();
             System.out.print("Entrez le taux horaire de cette main-d'œuvre (€) : ");
             double tauxHoraire = ValidationUtils.readDouble();
             System.out.print("Entrez le nombre d'heures travaillées : ");
-            double heuresTravaillees = ValidationUtils.readDouble();
-            System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.0 = haute productivité) : ");
-            double facteurProductivite = ValidationUtils.readDouble();
+            double heuresTravail = ValidationUtils.readDouble();
+            System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.1 = haute productivité) : ");
+            double productivite = ValidationUtils.readDouble();
+try{
 
-            System.out.println("Main-d'œuvre ajoutée avec succès !");
+    MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(),nomMainDoeuvre,20.0, MAIN_D_OEUVRE, UUID.randomUUID(), tauxHoraire, heuresTravail, productivite);
+    mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
+    System.out.println("Main-d'œuvre ajoutée avec succès !");
+} catch (RuntimeException e) {
+    throw new RuntimeException(e);
+}
+
             System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
             ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
         }
 
         calculerCoutTotal();
     }
+
 
     public static void calculerCoutTotal() {
         System.out.println("\n--- Calcul du coût total ---");

@@ -1,9 +1,21 @@
 import DAO.impl.ClientDAOImpl;
+import DAO.impl.MainOeuvreDAOImpl;
+import DAO.impl.MateriauxDAOImpl;
 import DAO.interfaces.ClientDAO;
+import DAO.interfaces.MainOeuvreDAO;
+import DAO.interfaces.MateriauxDAO;
 import Repository.impl.ClientRepositoryImpl;
+import Repository.impl.MainOeuvreRepositoryImpl;
+import Repository.impl.MateriauxRepositoryImpl;
 import Repository.interfaces.ClientRepository;
+import Repository.interfaces.MainOeuvreRepository;
+import Repository.interfaces.MateriauxRepository;
 import Services.impl.ClientServiceImpl;
+import Services.impl.MainOeuvreServiceImpl;
+import Services.impl.MateriauxServiceImpl;
 import Services.interfaces.ClientService;
+import Services.interfaces.MainOeuvreService;
+import Services.interfaces.MateriauxService;
 import View.MainGUI;
 import config.DatabaseConnection;
 
@@ -29,15 +41,15 @@ public class Main {
 
 
         ClientDAO clientDAO = new ClientDAOImpl();
-
+        MainOeuvreDAO mainOeuvreDAO = new MainOeuvreDAOImpl();
+        MateriauxDAO materiauxDAO = new MateriauxDAOImpl();
         ClientService clientService = new ClientServiceImpl(new ClientRepositoryImpl(clientDAO));
+        MainOeuvreService mainOeuvreService = new MainOeuvreServiceImpl(new MainOeuvreRepositoryImpl(mainOeuvreDAO));
+        MateriauxService materiauxService = new MateriauxServiceImpl(new MateriauxRepositoryImpl(materiauxDAO));
 
-        // Création de l'instance de MainGUI
-        MainGUI mainGUI = new MainGUI(clientService);
+        MainGUI mainGUI = new MainGUI(clientService,materiauxService,mainOeuvreService);
 
-        // Utilisation des méthodes non statiques via l'instance de MainGUI
-        mainGUI.afficherClients();
-        mainGUI.ajouterNouveauClient();
-        mainGUI.rechercherClient();
+//        mainGUI.afficherClients();
+mainGUI.afficherMenuPrincipal();
     }
 }

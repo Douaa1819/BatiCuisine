@@ -1,32 +1,34 @@
 package Services.impl;
 
+import Repository.impl.ProjetRepositoryImpl;
 import Repository.interfaces.ProjetRepository;
 import Services.interfaces.ProjetService;
 import models.Projet;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class ProjetServiceImpl implements ProjetService {
-    private ProjetRepository projetRepository;
-//
-//    public ProjetServiceImpl(ProjetRepository projetRepository) {
-//        this.projetRepository = projetRepository;
-//    }
-//
-//    @Override
-//    public void createProjet(Projet projet) {
-//        projetRepository.save(projet);
-//    }
+    private final ProjetRepository projetRepository;
 
-//    @Override
-//    public List<Projet> getAllProjets() {
-//        return projetRepository.findAll();
-//    }
+    public ProjetServiceImpl() {
+        this.projetRepository = new ProjetRepositoryImpl();
+    }
 
-//    @Override
-//    public Projet getProjetById(UUID id) {
-//        return projetRepository.findById(id);
-//    }
+    @Override
+    public void ajouterProjet(Projet projet) throws SQLException {
+        projetRepository.save(projet);
+    }
 
+    @Override
+    public Optional<Projet> getProjetById(UUID id) throws SQLException {
+        return projetRepository.findById(id);
+    }
+
+    @Override
+    public List<Projet> getAllProjets() throws SQLException {
+        return projetRepository.findAll();
+    }
 }
