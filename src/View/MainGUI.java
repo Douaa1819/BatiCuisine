@@ -1,9 +1,18 @@
 package View;
+import Services.interfaces.ClientService;
+import models.Client;
 import utils.ValidationUtils;
+
+import java.util.List;
+import java.util.UUID;
 
 public class MainGUI {
 
+    private static ClientService clientService;
 
+    public MainGUI(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     public static void afficherMenuPrincipal() {
         System.out.println("=== Bienvenue dans l'application de gestion des projets de rénovation de cuisines ===");
@@ -27,10 +36,15 @@ public class MainGUI {
                 case 2:
                     afficherProjetsExistants();
                     break;
+
                 case 3:
                     calculerCoutProjet();
                     break;
                 case 4:
+                    afficherClients();
+                    break;
+
+                case 5:
                     continuer = false;
                     System.out.println("Merci d'avoir utilisé l'application. Au revoir !");
                     break;
@@ -64,23 +78,22 @@ public class MainGUI {
 
     public static void rechercherClient() {
         System.out.println("\n--- Recherche de client existant ---");
-        System.out.print("Entrez le nom du client : ");
-        String nomClient = ValidationUtils.readString();
+        System.out.print("Entrez l'identifiant du client (UUID) : ");
+        String uuidString = ValidationUtils.readString();
+        UUID clientId = UUID.fromString(uuidString);
 
-        if ("Mme Dupont".equalsIgnoreCase(nomClient)) {
+        clientService.getClientById(clientId).ifPresentOrElse(client -> {
             System.out.println("Client trouvé !");
-            System.out.println("Nom : Mme Dupont");
-            System.out.println("Adresse : 12 Rue des Fleurs, Paris");
-            System.out.println("Numéro de téléphone : 06 12345678");
+            System.out.println("Nom : " + client.getNom());
+            System.out.println("Adresse : " + client.getAdress());
+            System.out.println("Numéro de téléphone : " + client.getPhone());
 
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
             String reponse = ValidationUtils.readString();
             if ("y".equalsIgnoreCase(reponse)) {
-                creerProjetPourClient("Mme Dupont");
+                creerProjetPourClient(String.valueOf(client));
             }
-        } else {
-            System.out.println("Client non trouvé.");
-        }
+        }, () -> System.out.println("Client non trouvé."));
     }
 
     public static void ajouterNouveauClient() {
@@ -92,11 +105,39 @@ public class MainGUI {
         System.out.print("Entrez le numéro de téléphone du client : ");
         String numeroTelephone = ValidationUtils.readString();
 
-        System.out.println("Nouveau client ajouté avec succès !");
-        System.out.println("Nom: " + nomClient);
-        System.out.println("Adresse: " + adresseClient);
-        System.out.println("Téléphone: " + numeroTelephone);
+        try {
+            Client client = new Client(UUID.randomUUID(), nomClient, adresseClient, numeroTelephone, false);
+            Client createdClient = clientService.createClient(client);
+
+            // Affiche les détails du client ajouté
+            System.out.println("Nouveau client ajouté avec succès !");
+            System.out.println("Nom: " + createdClient.getNom());
+            System.out.println("Adresse: " + createdClient.getAdress());
+            System.out.println("Téléphone: " + createdClient.getPhone());
+            System.out.println("ID: " + createdClient.getId()); // Affiche l'ID du client créé
+
+        } catch (Exception e) {
+            System.out.println("Erreur lors de l'ajout du client : " + e.getMessage());
+            e.printStackTrace(); // Affiche la trace de l'exception pour plus d'informations
+        }
     }
+    public static void afficherClients() {
+        System.out.println("\n--- Affichage des clients ---");
+        List<Client> clients = clientService.getAllClients();
+        if (clients.isEmpty()) {
+            System.out.println("Aucun client trouvé.");
+        } else {
+            for (Client client : clients) {
+                System.out.println("ID: " + client.getId());
+                System.out.println("Nom: " + client.getNom());
+                System.out.println("Adresse: " + client.getAdress());
+                System.out.println("Téléphone: " + client.getPhone());
+                System.out.println();
+            }
+        }
+    }
+
+
 
     public static void creerProjetPourClient(String nomClient) {
         System.out.println("\n--- Création d'un Nouveau Projet ---");

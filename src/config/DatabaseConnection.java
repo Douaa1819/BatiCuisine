@@ -10,12 +10,12 @@ public class DatabaseConnection {
 
     private Connection connection;
 
-    private static String url = "jdbc:postgresql://localhost:5432/jdbc";
+    private static String url = "jdbc:postgresql://localhost:5432/Bati_Cuisine";
     private static String user = "postgres";
     private static String password = "password";
 
 
-    public DatabaseConnection() {
+    private DatabaseConnection() {
         try {
             this.connection = DriverManager.getConnection(url, user, password);
             if (this.connection != null) {
@@ -40,10 +40,9 @@ public class DatabaseConnection {
     }
 
     public static void run() {
-        // Accéder à l'instance unique de DatabaseConnection
+
         DatabaseConnection databaseConnection = DatabaseConnection.getInstance();
 
-        // Récupérer la connexion
         Connection connection = databaseConnection.getConnection();
 
         if (connection != null) {
