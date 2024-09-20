@@ -129,9 +129,12 @@ public class MainGUI {
         String adresseClient = ValidationUtils.readString();
         System.out.print("Entrez le numéro de téléphone du client : ");
         String numeroTelephone = ValidationUtils.readString();
+        System.out.print("Est-ce que ce client est professionnel ? (1 pour oui, 0 pour non, par défaut 0) : ");
+        int choix = ValidationUtils.readInt();
+        boolean estProfessionnel = (choix == 1);
 
         try {
-            Client client = new Client(UUID.randomUUID(), nomClient, adresseClient, numeroTelephone, false);
+            Client client = new Client(UUID.randomUUID(), nomClient, adresseClient, numeroTelephone, estProfessionnel);
             Client createdClient = clientService.createClient(client);
 
             System.out.println("Nouveau client ajouté avec succès !");
@@ -170,9 +173,9 @@ public class MainGUI {
 
     public static void creerProjetPourClient(UUID clientId) {
         System.out.println("\n--- Création d'un Nouveau Projet ---");
-        System.out.print("Entrez le nom du projet : ");
+        System.out.println("Entrez le nom du projet : ");
         String nomProjet = ValidationUtils.readValidName();
-        System.out.print("Entrez la surface de la cuisine (en m²) : ");
+        System.out.println("Entrez la surface de la cuisine (en m²) : ");
         double surfaceCuisine = ValidationUtils.readDouble();
 
 
@@ -197,16 +200,19 @@ public class MainGUI {
         while (true) {
             System.out.print("Entrez le nom du matériau : ");
             String nomMateriau = ValidationUtils.readString();
-            System.out.print("Entrez la quantité de ce matériau : ");
+            System.out.println("Nom du matériau entré : " + nomMateriau);
+            System.out.println("Entrez la quantité de ce matériau : ");
             double quantite = ValidationUtils.readDouble();
-            System.out.print("Entrez le coût unitaire de ce matériau (€) : ");
+            System.out.println("Entrez le coût unitaire de ce matériau (€) : ");
             double coutUnitaire = ValidationUtils.readDouble();
-            System.out.print("Entrez le coût de transport de ce matériau (€) : ");
+            System.out.println("Entrez le taux de tva (%) : ");
+            double tva = ValidationUtils.readDouble();
+            System.out.println("Entrez le coût de transport de ce matériau (€) : ");
             double coutTransport = ValidationUtils.readDouble();
-            System.out.print("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
+            System.out.println("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
             double coefficientQualite = ValidationUtils.readDouble();
             try {
-                Materiaux materiaux = new Materiaux(UUID.randomUUID(), nomMateriau, 20.0, MATERIAUX, UUID.randomUUID(), coutUnitaire, quantite, coutTransport, coefficientQualite);
+                Materiaux materiaux = new Materiaux(UUID.randomUUID(), nomMateriau, tva, MATERIAUX, UUID.randomUUID(), coutUnitaire, quantite, coutTransport, coefficientQualite);
                 materiauxService.ajouterMateriaux(materiaux);
                 System.out.println("Matériau ajouté avec succès !");
             } catch (RuntimeException e) {
@@ -226,31 +232,31 @@ public class MainGUI {
     public static void ajouterMainOeuvre(Projet projet) {
         System.out.println("\n--- Ajout de la main-d'œuvre ---");
         boolean ajouterAutre = true;
-
         while (ajouterAutre) {
-            System.out.print("Entrez le nom du mmain-d'œuvre : ");
+            System.out.println("Entrez le nom du main-d'œuvre : ");
             String nomMainDoeuvre = ValidationUtils.readString();
+            System.out.println("Entrez le taux de tva (%) : ");
+            double tva = ValidationUtils.readDouble();
             System.out.print("Entrez le taux horaire de cette main-d'œuvre (€) : ");
             double tauxHoraire = ValidationUtils.readDouble();
             System.out.print("Entrez le nombre d'heures travaillées : ");
             double heuresTravail = ValidationUtils.readDouble();
             System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.1 = haute productivité) : ");
             double productivite = ValidationUtils.readDouble();
-try{
+        try{
 
-    MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(),nomMainDoeuvre,20.0, MAIN_D_OEUVRE, UUID.randomUUID(), tauxHoraire, heuresTravail, productivite);
-    mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
-    System.out.println("Main-d'œuvre ajoutée avec succès !");
-} catch (RuntimeException e) {
-    throw new RuntimeException(e);
-}
-
-            System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
-            ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
+            MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(),nomMainDoeuvre,tva, MAIN_D_OEUVRE, UUID.randomUUID(), tauxHoraire, heuresTravail, productivite);
+            mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
+            System.out.println("Main-d'œuvre ajoutée avec succès !");
+                 } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
+            System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
+                        ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
+                    }
 
-        calculerCoutTotal(projet);
-    }
+                    calculerCoutTotal(projet);
+                }
 
 
     public static void calculerCoutTotal(Projet projet) {
@@ -266,13 +272,14 @@ try{
 
         //  marge bénéficiaire
         System.out.print("Souhaitez-vous appliquer une marge bénéficiaire au projet ? (y/n) : ");
-        String reponseMarge = ValidationUtils.readString();
+        String reponseMarge = ValidationUtils.readValidName();
         double margeBeneficiaire = 0.0;
         if ("y".equalsIgnoreCase(reponseMarge)) {
             System.out.print("Entrez le pourcentage de marge bénéficiaire (%) : ");
             margeBeneficiaire = ValidationUtils.readDouble();
             projet.setMargeBeneficiaire(margeBeneficiaire);
         }
+        String reponse = ValidationUtils.readString();
 
 
 //        double coutMateriaux = materiauxService.calculerCoutTotal(projet.getId());
@@ -288,8 +295,6 @@ try{
         System.out.println("Client : " + projet.getClientId());
         System.out.println("Surface : " + projet.getSurface() + " m²");
 //        System.out.println("Coût total du projet (TVA et marge incluses) : " + coutTotal + " €");
-
-        // Sauvegarder le projet avec le coût total mis à jour
         ProjetService projetService = new ProjetServiceImpl();
         try {
             projetService.mettreAJourProjet(projet);
@@ -302,8 +307,30 @@ try{
 
     public static void afficherProjetsExistants() {
         System.out.println("\n--- Afficher les projets existants ---");
-        // Logique pour afficher les projets existants
+        ProjetServiceImpl projetService = new ProjetServiceImpl();
+
+        try {
+            List<Projet> projets = projetService.getAllProjets();
+            if (projets.isEmpty()) {
+                System.out.println("Aucun projet existant.");
+            } else {
+                System.out.printf("%-30s %-10s %-20s %-15s %-10s%n", "Nom", "Surface", "Marge Bénéficiaire", "Coût Total", "État");
+                System.out.println("---------------------------------------------------------------------------------------------");
+
+                for (Projet projet : projets) {
+                    System.out.printf("%-30s %-10.2f %-20.2f %-15.2f %-10s%n",
+                            projet.getNomProjet(),
+                            projet.getSurface(),
+                            projet.getMargeBeneficiaire(),
+                            projet.getCoutTotal(),
+                            projet.getEtatProjet());
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de la récupération des projets : " + e.getMessage());
+        }
     }
+
 
     public static void calculerCoutProjet() {
         System.out.println("\n--- Calculer le coût d'un projet ---");
