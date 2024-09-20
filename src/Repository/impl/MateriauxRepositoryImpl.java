@@ -5,6 +5,7 @@ import DAO.interfaces.MateriauxDAO;
 import Repository.interfaces.MateriauxRepository;
 import models.Materiaux;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,5 +31,15 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
     public Optional<Materiaux>findById(UUID id){
     return materiauxDAO.findById(id);
 
+    }
+
+    @Override
+    public List<Materiaux> getMateriauxByProjetId(UUID projetId) {
+        return materiauxDAO.getMateriauxByProjetId(projetId);
+    }
+
+    @Override
+    public double calculerCoutTotal(UUID projetId) {
+        return materiauxDAO.calculerCoutTotal(projetId);
     }
 }

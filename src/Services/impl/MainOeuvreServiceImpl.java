@@ -8,6 +8,7 @@ import Repository.interfaces.MainOeuvreRepository;
 import Services.interfaces.MainOeuvreService;
 import models.MainOeuvre;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,15 @@ public class MainOeuvreServiceImpl implements MainOeuvreService {
     @Override
     public Optional<MainOeuvre> trouverMainOeuvreParId(UUID id) {
         return mainOeuvreRepository.findById(id);
+    }
+
+    @Override
+    public List<MainOeuvre> getMainOeuvreByProjetId(UUID projetId) {
+        return mainOeuvreRepository.getMainOeuvreByProjetId(projetId);
+    }
+
+    @Override
+    public double calculerCoutTotal(UUID projetId) {
+        return mainOeuvreRepository.calculerCoutTotal(projetId);
     }
 }

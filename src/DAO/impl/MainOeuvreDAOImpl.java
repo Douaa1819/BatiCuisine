@@ -5,6 +5,8 @@ import config.DatabaseConnection;
 import enums.TypeComposant;
 import models.MainOeuvre;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,5 +61,40 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
         }
         return Optional.empty();
     }
-}
+    @Override
+    public List<MainOeuvre> getMainOeuvreByProjetId(UUID projet_id) {
+        List<MainOeuvre> mainOeuvreList = new ArrayList<>();
+        String sql = "SELECT * FROM mainOeuvre WHERE projet_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1,projet_id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                MainOeuvre mainOeuvre = new MainOeuvre(
+                        (UUID) resultSet.getObject("id"),
+                        resultSet.getString("nom"),
+                        resultSet.getDouble("tva"),
+                        TypeComposant.valueOf(resultSet.getString("typeComposant")),
+                        (UUID) resultSet.getObject("projet_id"),
+                        resultSet.getDouble("tauxHoraire"),
+                        resultSet.getDouble("heuresTravaillees"),
+                        resultSet.getDouble("productivite")
+                );
+                mainOeuvreList.add(mainOeuvre);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur lors de la récupération de la main-d'œuvre : " + e.getMessage());
+        }
+        return mainOeuvreList;
+    }
 
+    @Override
+    public double calculerCoutTotal(UUID projetId) {
+        double total = 0.0;
+        List<MainOeuvre> mainOeuvreList = getMainOeuvreByProjetId(projetId);
+        for (MainOeuvre mainOeuvre : mainOeuvreList) {
+            double coutMainOeuvre = mainOeuvre.getTauxHoraire() * mainOeuvre.getHeuresTravail() * mainOeuvre.getProductiviteOuvrier();
+            total += coutMainOeuvre + (coutMainOeuvre * (mainOeuvre.getTva() / 100));
+        }
+        return total;
+    }
+}

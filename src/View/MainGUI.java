@@ -58,7 +58,7 @@ public class MainGUI {
                     break;
 
                 case 3:
-                    calculerCoutProjet();
+//                    calculerCoutProjet();
                     break;
                 case 4:
 //                    afficherClients();
@@ -121,6 +121,7 @@ public class MainGUI {
         }, () -> System.out.println("Client non trouvé."));
     }
 
+
     public static void ajouterNouveauClient() {
         System.out.println("\n--- Ajout d'un nouveau client ---");
         System.out.print("Entrez le nom du client : ");
@@ -153,6 +154,7 @@ public class MainGUI {
         }
 
     }
+
     public static void afficherClients() {
         System.out.println("\n--- Affichage des clients ---");
         List<Client> clients = clientService.getAllClients();
@@ -168,7 +170,6 @@ public class MainGUI {
             }
         }
     }
-
 
 
     public static void creerProjetPourClient(UUID clientId) {
@@ -243,20 +244,20 @@ public class MainGUI {
             double heuresTravail = ValidationUtils.readDouble();
             System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.1 = haute productivité) : ");
             double productivite = ValidationUtils.readDouble();
-        try{
+            try {
 
-            MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(),nomMainDoeuvre,tva, MAIN_D_OEUVRE, UUID.randomUUID(), tauxHoraire, heuresTravail, productivite);
-            mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
-            System.out.println("Main-d'œuvre ajoutée avec succès !");
-                 } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+                MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(), nomMainDoeuvre, tva, MAIN_D_OEUVRE, UUID.randomUUID(), tauxHoraire, heuresTravail, productivite);
+                mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
+                System.out.println("Main-d'œuvre ajoutée avec succès !");
+            } catch (RuntimeException e) {
+                throw new RuntimeException(e);
+            }
             System.out.print("Voulez-vous ajouter un autre type de main-d'œuvre ? (y/n) : ");
-                        ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
-                    }
+            ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
+        }
 
-                    calculerCoutTotal(projet);
-                }
+        calculerCoutTotal(projet);
+    }
 
 
     public static void calculerCoutTotal(Projet projet) {
@@ -270,31 +271,31 @@ public class MainGUI {
             projet.setTva(tva);
         }
 
-        //  marge bénéficiaire
         System.out.print("Souhaitez-vous appliquer une marge bénéficiaire au projet ? (y/n) : ");
-        String reponseMarge = ValidationUtils.readValidName();
+        String reponseMarge = ValidationUtils.readString();
         double margeBeneficiaire = 0.0;
         if ("y".equalsIgnoreCase(reponseMarge)) {
             System.out.print("Entrez le pourcentage de marge bénéficiaire (%) : ");
             margeBeneficiaire = ValidationUtils.readDouble();
             projet.setMargeBeneficiaire(margeBeneficiaire);
         }
-        String reponse = ValidationUtils.readString();
 
+        double coutMateriaux = materiauxService.calculerCoutTotal(projet.getId());
+        double coutMainOeuvre = mainOeuvreService.calculerCoutTotal(projet.getId());
+        double coutTotal = coutMateriaux + coutMainOeuvre;
 
-//        double coutMateriaux = materiauxService.calculerCoutTotal(projet.getId());
-//        double coutMainOeuvre = mainOeuvreService.calculerCoutTotal(projet.getId());
-
-//        double coutTotal = coutMateriaux + coutMainOeuvre;
-//        coutTotal += coutTotal * (tva / 100);
-//        coutTotal += coutTotal * (margeBeneficiaire / 100);
-//        projet.setCoutTotal(coutTotal);
+        // Appliquer la TVA et la marge bénéficiaire
+        coutTotal += coutTotal * (tva / 100);
+        coutTotal += coutTotal * (margeBeneficiaire / 100);
+        projet.setCoutTotal(coutTotal);
 
         System.out.println("\n--- Résultat du Calcul ---");
         System.out.println("Nom du projet : " + projet.getNomProjet());
         System.out.println("Client : " + projet.getClientId());
         System.out.println("Surface : " + projet.getSurface() + " m²");
-//        System.out.println("Coût total du projet (TVA et marge incluses) : " + coutTotal + " €");
+        System.out.println("Coût total du projet (TVA et marge incluses) : " + coutTotal + " €");
+
+        // Mettre à jour le projet
         ProjetService projetService = new ProjetServiceImpl();
         try {
             projetService.mettreAJourProjet(projet);
@@ -303,7 +304,6 @@ public class MainGUI {
             System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
         }
     }
-
 
     public static void afficherProjetsExistants() {
         System.out.println("\n--- Afficher les projets existants ---");
@@ -330,10 +330,12 @@ public class MainGUI {
             System.err.println("Erreur lors de la récupération des projets : " + e.getMessage());
         }
     }
-
-
-    public static void calculerCoutProjet() {
-        System.out.println("\n--- Calculer le coût d'un projet ---");
-        // Logique pour calculer le coût d'un projet déjà existant
-    }
 }
+
+
+
+
+
+
+
+

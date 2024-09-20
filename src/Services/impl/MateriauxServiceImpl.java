@@ -8,6 +8,7 @@ import Services.interfaces.MateriauxService;
 import models.Materiaux;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,5 +28,15 @@ public class MateriauxServiceImpl implements MateriauxService {
     @Override
     public Optional<Materiaux> trouverMateriauxParId(UUID id) {
         return materiauxRepository.findById(id);
+    }
+
+    @Override
+    public List<Materiaux> getMateriauxByProjetId(UUID projetId) {
+        return materiauxRepository.getMateriauxByProjetId(projetId);
+    }
+
+    @Override
+    public double calculerCoutTotal(UUID projetId) {
+        return materiauxRepository.calculerCoutTotal(projetId);
     }
 }

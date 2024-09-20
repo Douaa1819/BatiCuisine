@@ -26,20 +26,6 @@ import java.sql.DriverManager;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-//        MainGUI.afficherMenuPrincipal();
-
-
-//DatabaseConnection.run();
-//        ClientDAO ClientDAO = new ClientDAOImpl();
-//        ClientRepository clientRepository = new ClientRepositoryImpl(ClientDAO);
-//        ClientService clientService = new ClientServiceImpl(clientRepository);
-//
-//        MainGUI mainGUI = new MainGUI(clientService);
-//        mainGUI.afficherMenuPrincipal();
-
-
         ClientDAO clientDAO = new ClientDAOImpl();
         MainOeuvreDAO mainOeuvreDAO = new MainOeuvreDAOImpl();
         MateriauxDAO materiauxDAO = new MateriauxDAOImpl();
@@ -47,9 +33,7 @@ public class Main {
         MainOeuvreService mainOeuvreService = new MainOeuvreServiceImpl(new MainOeuvreRepositoryImpl(mainOeuvreDAO));
         MateriauxService materiauxService = new MateriauxServiceImpl(new MateriauxRepositoryImpl(materiauxDAO));
 
-        MainGUI mainGUI = new MainGUI(clientService,materiauxService,mainOeuvreService);
-
-//        mainGUI.afficherClients();
-mainGUI.afficherMenuPrincipal();
+        MainGUI mainGUI = new MainGUI(clientService, materiauxService, mainOeuvreService);
+        mainGUI.afficherMenuPrincipal();
     }
 }
