@@ -30,4 +30,11 @@ public class ProjetRepositoryImpl implements ProjetRepository {
     public List<Projet> findAll() throws SQLException {
         return projetDAO.getAllProjets();
     }
+
+    @Override
+    public void update(Projet projet) throws SQLException {
+        projetDAO.update(projet);
+    }
+
+
 }

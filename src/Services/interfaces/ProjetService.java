@@ -15,4 +15,5 @@ public interface ProjetService {
     void ajouterProjet(Projet projet) throws SQLException;
     Optional<Projet> getProjetById(UUID id) throws SQLException;
     List<Projet> getAllProjets() throws SQLException;
+    void mettreAJourProjet(Projet projet) throws SQLException;
 }

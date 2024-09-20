@@ -22,14 +22,14 @@ public class ProjetDAOImpl implements ProjetDAO {
 
     @Override
     public void save(Projet projet) throws SQLException {
-        String sql = "INSERT INTO projets (id, nomprojet, surface, margebeneficiaire, couttotal, etatprojet, tva, client_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO projet (id, nomprojet, surface, margebeneficiaire, couttotal, etatprojet, tva, client_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, projet.getId());
             statement.setString(2, projet.getNomProjet());
             statement.setDouble(3, projet.getSurface());
             statement.setDouble(4, projet.getMargeBeneficiaire());
             statement.setDouble(5, projet.getCoutTotal());
-            statement.setString(6, projet.getEtatProjet().name());
+            statement.setObject(6, projet.getEtatProjet(), java.sql.Types.OTHER);
             statement.setDouble(7, projet.getTva());
             statement.setObject(8, projet.getClientId());
             statement.executeUpdate();
@@ -38,7 +38,7 @@ public class ProjetDAOImpl implements ProjetDAO {
 
     @Override
     public Optional<Projet> getProjetById(UUID id) throws SQLException {
-        String sql = "SELECT * FROM projets WHERE id = ?";
+        String sql = "SELECT * FROM projet WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
@@ -61,7 +61,7 @@ public class ProjetDAOImpl implements ProjetDAO {
     @Override
     public List<Projet> getAllProjets() throws SQLException {
         List<Projet> projets = new ArrayList<>();
-        String sql = "SELECT * FROM projets";
+        String sql = "SELECT * FROM projet";
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
@@ -79,4 +79,20 @@ public class ProjetDAOImpl implements ProjetDAO {
         }
         return projets;
     }
+
+    @Override
+    public void update(Projet projet) throws SQLException {
+        String sql = "UPDATE projet SET nomprojet = ?, surface = ?, margebeneficiaire = ?, couttotal = ?, etatprojet = ?, tva = ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, projet.getNomProjet());
+            statement.setDouble(2, projet.getSurface());
+            statement.setDouble(3, projet.getMargeBeneficiaire());
+            statement.setDouble(4, projet.getCoutTotal());
+            statement.setObject(5, projet.getEtatProjet().name() , java.sql.Types.OTHER);
+            statement.setDouble(6, projet.getTva());
+            statement.setObject(7, projet.getId());
+            statement.executeUpdate();
+        }
+    }
+
 }

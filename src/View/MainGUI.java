@@ -101,6 +101,8 @@ public class MainGUI {
 
     public static void rechercherClient() {
         System.out.println("\n--- Recherche de client existant ---");
+        System.out.println("\n--- List de Nos Clients ---");
+        afficherClients();
         System.out.print("Entrez l'identifiant du client (UUID) : ");
         String uuidString = ValidationUtils.readString();
         UUID clientId = UUID.fromString(uuidString);
@@ -114,7 +116,7 @@ public class MainGUI {
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
             String reponse = ValidationUtils.readString();
             if ("y".equalsIgnoreCase(reponse)) {
-                creerProjetPourClient(String.valueOf(client));
+                creerProjetPourClient(client.getId());
             }
         }, () -> System.out.println("Client non trouvé."));
     }
@@ -140,7 +142,7 @@ public class MainGUI {
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
             String reponse = ValidationUtils.readString();
             if ("y".equalsIgnoreCase(reponse)) {
-                creerProjetPourClient(createdClient.getNom());
+                creerProjetPourClient(createdClient.getId());
             }
         } catch (Exception e) {
             System.out.println("Erreur lors de l'ajout du client : " + e.getMessage());
@@ -148,34 +150,33 @@ public class MainGUI {
         }
 
     }
-//    public static void afficherClients() {
-//        System.out.println("\n--- Affichage des clients ---");
-//        List<Client> clients = clientService.getAllClients();
-//        if (clients.isEmpty()) {
-//            System.out.println("Aucun client trouvé.");
-//        } else {
-//            for (Client client : clients) {
-//                System.out.println("ID: " + client.getId());
-//                System.out.println("Nom: " + client.getNom());
+    public static void afficherClients() {
+        System.out.println("\n--- Affichage des clients ---");
+        List<Client> clients = clientService.getAllClients();
+        if (clients.isEmpty()) {
+            System.out.println("Aucun client trouvé.");
+        } else {
+            for (Client client : clients) {
+                System.out.println("ID: " + client.getId());
+                System.out.println("Nom: " + client.getNom());
 //                System.out.println("Adresse: " + client.getAdress());
 //                System.out.println("Téléphone: " + client.getPhone());
-//                System.out.println();
-//            }
-//        }
-//    }
+                System.out.println();
+            }
+        }
+    }
 
 
 
-    public static void creerProjetPourClient(String nomClient) {
+    public static void creerProjetPourClient(UUID clientId) {
         System.out.println("\n--- Création d'un Nouveau Projet ---");
         System.out.print("Entrez le nom du projet : ");
         String nomProjet = ValidationUtils.readValidName();
         System.out.print("Entrez la surface de la cuisine (en m²) : ");
         double surfaceCuisine = ValidationUtils.readDouble();
 
-        ajouterMateriaux();
-        ajouterMainOeuvre();
-        Projet projet = new Projet(UUID.randomUUID(), nomProjet, surfaceCuisine, 0.0, 0.0, EtatProjet.ENCOURS, 0.0, UUID.randomUUID());
+
+        Projet projet = new Projet(UUID.randomUUID(), nomProjet, surfaceCuisine, 0.0, 0.0, EtatProjet.ENCOURS, 0.0, clientId);
         ProjetService projetService = new ProjetServiceImpl();
 
         try {
@@ -185,10 +186,13 @@ public class MainGUI {
             System.out.println("Erreur lors de la création du projet : " + e.getMessage());
             e.printStackTrace();
         }
+
+        ajouterMateriaux(projet);
+        ajouterMainOeuvre(projet);
     }
 
 
-    public static void ajouterMateriaux() {
+    public static void ajouterMateriaux(Projet projet) {
         System.out.println("\n--- Ajout des matériaux ---");
         while (true) {
             System.out.print("Entrez le nom du matériau : ");
@@ -212,14 +216,14 @@ public class MainGUI {
             System.out.print("Voulez-vous ajouter un autre matériau ? (y/n) : ");
             String reponse = ValidationUtils.readString();
             if (!reponse.equalsIgnoreCase("y")) {
-                ajouterMainOeuvre();
+                ajouterMainOeuvre(projet);
                 break;
             }
         }
     }
 
 
-    public static void ajouterMainOeuvre() {
+    public static void ajouterMainOeuvre(Projet projet) {
         System.out.println("\n--- Ajout de la main-d'œuvre ---");
         boolean ajouterAutre = true;
 
@@ -245,14 +249,56 @@ try{
             ajouterAutre = "y".equalsIgnoreCase(ValidationUtils.readString());
         }
 
-        calculerCoutTotal();
+        calculerCoutTotal(projet);
     }
 
 
-    public static void calculerCoutTotal() {
+    public static void calculerCoutTotal(Projet projet) {
         System.out.println("\n--- Calcul du coût total ---");
-     //lOGIQUE pour calculer
+        System.out.print("Souhaitez-vous appliquer une TVA au projet ? (y/n) : ");
+        String reponseTVA = ValidationUtils.readString();
+        double tva = 0.0;
+        if ("y".equalsIgnoreCase(reponseTVA)) {
+            System.out.print("Entrez le pourcentage de TVA (%) : ");
+            tva = ValidationUtils.readDouble();
+            projet.setTva(tva);
+        }
+
+        //  marge bénéficiaire
+        System.out.print("Souhaitez-vous appliquer une marge bénéficiaire au projet ? (y/n) : ");
+        String reponseMarge = ValidationUtils.readString();
+        double margeBeneficiaire = 0.0;
+        if ("y".equalsIgnoreCase(reponseMarge)) {
+            System.out.print("Entrez le pourcentage de marge bénéficiaire (%) : ");
+            margeBeneficiaire = ValidationUtils.readDouble();
+            projet.setMargeBeneficiaire(margeBeneficiaire);
+        }
+
+
+//        double coutMateriaux = materiauxService.calculerCoutTotal(projet.getId());
+//        double coutMainOeuvre = mainOeuvreService.calculerCoutTotal(projet.getId());
+
+//        double coutTotal = coutMateriaux + coutMainOeuvre;
+//        coutTotal += coutTotal * (tva / 100);
+//        coutTotal += coutTotal * (margeBeneficiaire / 100);
+//        projet.setCoutTotal(coutTotal);
+
+        System.out.println("\n--- Résultat du Calcul ---");
+        System.out.println("Nom du projet : " + projet.getNomProjet());
+        System.out.println("Client : " + projet.getClientId());
+        System.out.println("Surface : " + projet.getSurface() + " m²");
+//        System.out.println("Coût total du projet (TVA et marge incluses) : " + coutTotal + " €");
+
+        // Sauvegarder le projet avec le coût total mis à jour
+        ProjetService projetService = new ProjetServiceImpl();
+        try {
+            projetService.mettreAJourProjet(projet);
+            System.out.println("Coût total calculé et projet mis à jour avec succès !");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
+        }
     }
+
 
     public static void afficherProjetsExistants() {
         System.out.println("\n--- Afficher les projets existants ---");

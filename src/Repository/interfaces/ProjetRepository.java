@@ -11,4 +11,5 @@ public interface ProjetRepository {
     void save(Projet projet) throws SQLException;
     Optional<Projet> findById(UUID id) throws SQLException;
     List<Projet> findAll() throws SQLException;
+    void update(Projet projet) throws SQLException;
 }

@@ -31,4 +31,8 @@ public class ProjetServiceImpl implements ProjetService {
     public List<Projet> getAllProjets() throws SQLException {
         return projetRepository.findAll();
     }
+    @Override
+    public void mettreAJourProjet(Projet projet) throws SQLException {
+        projetRepository.update(projet);
+    }
 }
