@@ -45,12 +45,18 @@ public class ValidationUtils {
      * @return Le double entré par l'utilisateur.
      */
     public static double readDouble() {
-        while (!scanner.hasNextDouble()) {
-            System.out.println("Erreur : veuillez entrer un nombre valide.");
-            scanner.next();
+        while (true) {
+            if (scanner.hasNextDouble()) {
+                double value = scanner.nextDouble();
+                scanner.nextLine();
+                return value;
+            } else {
+                System.out.println("Erreur : veuillez entrer un nombre valide.");
+                scanner.next();
+            }
         }
-        return scanner.nextDouble();
     }
+
 
     /**
      * Vérifie si une chaîne de caractères est null ou vide.
@@ -62,6 +68,10 @@ public class ValidationUtils {
         return input == null || input.trim().isEmpty();
     }
 
+    private static boolean isValidName(String input) {
+        return input != null && input.matches("[a-zA-Z\\s]+");
+    }
+
     public static String readValidName() {
         String input = scanner.nextLine();
         while (!isValidName(input)) {
@@ -70,9 +80,7 @@ public class ValidationUtils {
         }
         return input;
     }
-    private static boolean isValidName(String input) {
-        return input != null && input.matches("[a-zA-Z\\s]+");
-    }
+
 
     /**
      * Convertit une chaîne de caractères en entier, en renvoyant une valeur par défaut
