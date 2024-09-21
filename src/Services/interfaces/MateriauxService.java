@@ -11,4 +11,5 @@ public interface MateriauxService {
     Optional<Materiaux> trouverMateriauxParId(UUID id);
     List<Materiaux> getMateriauxByProjetId(UUID projetId);
     double calculerCoutTotal(UUID projetId);
+    double calculerCoutTotalAvantTVA(UUID projetId);
 }

@@ -79,4 +79,24 @@ public class ClientDAOImpl implements ClientDAO {
         boolean estProfessionnel = rs.getBoolean("estProfessionnel");
         return new Client( id,nom, adresse, telephone, estProfessionnel);
     }
+
+
+    @Override
+    public List<Client> getClientsByName(String nomClient) throws SQLException {
+        String sql = "SELECT id, nom, adresse, telephone, estProfessionnel FROM client WHERE nom = ?";
+        List<Client> clients = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, nomClient);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Client client = mapResultSetToClient(resultSet);
+                    clients.add(client);
+                }
+            }
+        }
+        return clients;
+    }
+
+
 }

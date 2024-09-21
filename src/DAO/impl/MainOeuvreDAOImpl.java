@@ -97,4 +97,19 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
         }
         return total;
     }
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        double total = 0.0;
+        String sql = "SELECT SUM(tauxhoraire * heurestravail) FROM mainoeuvre WHERE projet_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, projetId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
 }

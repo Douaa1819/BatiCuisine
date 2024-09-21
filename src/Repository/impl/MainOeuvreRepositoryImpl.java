@@ -41,4 +41,9 @@ public class MainOeuvreRepositoryImpl implements MainOeuvreRepository {
     public double calculerCoutTotal(UUID projetId) {
         return mainOeuvreDAO.calculerCoutTotal(projetId);
     }
+
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        return mainOeuvreDAO.calculerCoutTotalAvantTVA(projetId);
+    }
 }

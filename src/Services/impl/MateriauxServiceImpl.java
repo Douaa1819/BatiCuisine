@@ -1,13 +1,9 @@
 package Services.impl;
 
-import DAO.impl.MateriauxDAOImpl;
-import DAO.interfaces.MateriauxDAO;
-import Repository.impl.MateriauxRepositoryImpl;
 import Repository.interfaces.MateriauxRepository;
 import Services.interfaces.MateriauxService;
 import models.Materiaux;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,4 +35,11 @@ public class MateriauxServiceImpl implements MateriauxService {
     public double calculerCoutTotal(UUID projetId) {
         return materiauxRepository.calculerCoutTotal(projetId);
     }
+
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        return materiauxRepository.calculerCoutTotalAvantTVA(projetId);
+    }
+
+
 }

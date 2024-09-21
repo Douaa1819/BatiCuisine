@@ -42,4 +42,10 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
     public double calculerCoutTotal(UUID projetId) {
         return materiauxDAO.calculerCoutTotal(projetId);
     }
+
+
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        return materiauxDAO.calculerCoutTotalAvantTVA(projetId);
+    }
 }

@@ -12,4 +12,5 @@ public interface MainOeuvreService {
     Optional<MainOeuvre> trouverMainOeuvreParId(UUID id);
     List<MainOeuvre> getMainOeuvreByProjetId(UUID projetId);
     double calculerCoutTotal(UUID projetId);
+    double calculerCoutTotalAvantTVA(UUID projetId);
 }

@@ -4,6 +4,8 @@ import Repository.interfaces.ClientRepository;
 import Services.interfaces.ClientService;
 import models.Client;
 
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,5 +31,15 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<Client> getAllClients() {
         return clientRepository.findAll();
+    }
+
+    @Override
+    public List<Client> getClientsByName(String nomClient) {
+        try {
+            return clientRepository.findClientsByName(nomClient);
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la recherche des clients par nom : " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 }

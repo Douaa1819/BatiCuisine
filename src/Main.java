@@ -7,9 +7,6 @@ import DAO.interfaces.MateriauxDAO;
 import Repository.impl.ClientRepositoryImpl;
 import Repository.impl.MainOeuvreRepositoryImpl;
 import Repository.impl.MateriauxRepositoryImpl;
-import Repository.interfaces.ClientRepository;
-import Repository.interfaces.MainOeuvreRepository;
-import Repository.interfaces.MateriauxRepository;
 import Services.impl.ClientServiceImpl;
 import Services.impl.MainOeuvreServiceImpl;
 import Services.impl.MateriauxServiceImpl;
@@ -17,10 +14,9 @@ import Services.interfaces.ClientService;
 import Services.interfaces.MainOeuvreService;
 import Services.interfaces.MateriauxService;
 import View.MainGUI;
-import config.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+
+
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.

@@ -78,7 +78,7 @@ public class MateriauxDAOImpl implements MateriauxDAO {
                         resultSet.getDouble("tva"),
                         TypeComposant.valueOf(resultSet.getString("typeComposant")),
                         (UUID) resultSet.getObject("projet_id"),
-                        resultSet.getDouble("coutUnitaire"),
+                        resultSet.getDouble("coutunitaire"),
                         resultSet.getDouble("quantite"),
                         resultSet.getDouble("coutTransport"),
                         resultSet.getDouble("coefficientQualite")
@@ -101,4 +101,22 @@ public class MateriauxDAOImpl implements MateriauxDAO {
         }
         return total;
     }
+
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        double total = 0.0;
+        String sql = "SELECT SUM(coutunitaire * quantite) FROM materiaux WHERE projet_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, projetId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                total = rs.getDouble(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+  
 }

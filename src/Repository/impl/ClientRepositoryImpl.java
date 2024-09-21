@@ -4,6 +4,7 @@ import DAO.interfaces.ClientDAO;
 import Repository.interfaces.ClientRepository;
 import models.Client;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +29,11 @@ public class ClientRepositoryImpl  implements ClientRepository {
     @Override
     public List<Client> findAll() {
         return clientDAO.readAll();
+    }
+
+    @Override
+    public List<Client> findClientsByName(String nomClient) throws SQLException {
+        return clientDAO.getClientsByName(nomClient);
     }
 }
 

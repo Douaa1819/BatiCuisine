@@ -1,9 +1,6 @@
 package Services.impl;
 
-import DAO.impl.MainOeuvreDAOImpl;
-import DAO.interfaces.MainOeuvreDAO;
-import DAO.interfaces.MateriauxDAO;
-import Repository.impl.MainOeuvreRepositoryImpl;
+
 import Repository.interfaces.MainOeuvreRepository;
 import Services.interfaces.MainOeuvreService;
 import models.MainOeuvre;
@@ -39,4 +36,12 @@ public class MainOeuvreServiceImpl implements MainOeuvreService {
     public double calculerCoutTotal(UUID projetId) {
         return mainOeuvreRepository.calculerCoutTotal(projetId);
     }
+
+
+    @Override
+    public double calculerCoutTotalAvantTVA(UUID projetId) {
+        return mainOeuvreRepository.calculerCoutTotalAvantTVA(projetId);
+    }
+
+
 }
