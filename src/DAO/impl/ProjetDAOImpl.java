@@ -65,33 +65,24 @@ public class ProjetDAOImpl implements ProjetDAO {
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
 
-            return resultSetToStream(resultSet)
-                    .map(rs -> {
-                        try {
-                            return new Projet(
-                                    UUID.fromString(rs.getString("id")),
-                                    rs.getString("nomprojet"),
-                                    rs.getDouble("surface"),
-                                    rs.getDouble("margebeneficiaire"),
-                                    rs.getDouble("couttotal"),
-                                    EtatProjet.valueOf(rs.getString("etatprojet")),
-                                    rs.getDouble("tva"),
-                                    UUID.fromString(rs.getString("client_id"))
-                            );
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                    })
-                    .toList();
+            List<Projet> projets = new ArrayList<>();
+            while (resultSet.next()) {
+                Projet projet = new Projet(
+                        UUID.fromString(resultSet.getString("id")),
+                        resultSet.getString("nomprojet"),
+                        resultSet.getDouble("surface"),
+                        resultSet.getDouble("margebeneficiaire"),
+                        resultSet.getDouble("couttotal"),
+                        EtatProjet.valueOf(resultSet.getString("etatprojet")),
+                        resultSet.getDouble("tva"),
+                        UUID.fromString(resultSet.getString("client_id"))
+                );
+                projets.add(projet);
+            }
+            return projets;
         }
     }
-    private Stream<ResultSet> resultSetToStream(ResultSet resultSet) throws SQLException {
-        List<ResultSet> results = new ArrayList<>();
-        while (resultSet.next()) {
-            results.add(resultSet);
-        }
-        return results.stream();
-    }
+
 
 
     @Override

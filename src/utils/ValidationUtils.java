@@ -112,6 +112,7 @@ public class ValidationUtils {
      */
     public static double parseDoubleOrDefault(String input, double defaultValue) {
         try {
+
             return Double.parseDouble(input.trim());
         } catch (NumberFormatException e) {
             return defaultValue;

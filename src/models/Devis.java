@@ -1,17 +1,18 @@
 package models;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
 public class Devis {
     private UUID id;
-    private Date dateEmission;
-    private Date dateValidee;
+    private  LocalDate dateEmission;
+    private  LocalDate dateValidee;
     private boolean accepte;
     private UUID projetId;
 
 
-    public Devis(UUID id, Date dateEmission, Date dateValidee, boolean accepte, UUID projetId) {
+    public Devis(UUID id, LocalDate dateEmission, LocalDate dateValidee, boolean accepte, UUID projetId) {
         this.id = id;
         this.dateEmission = dateEmission;
         this.dateValidee = dateValidee;
@@ -28,19 +29,19 @@ public class Devis {
         this.id = id;
     }
 
-    public Date getDateEmission() {
+    public LocalDate getDateEmission() {
         return dateEmission;
     }
 
-    public void setDateEmission(Date dateEmission) {
+    public void setDateEmission(LocalDate dateEmission) {
         this.dateEmission = dateEmission;
     }
 
-    public Date getDateValidee() {
+    public LocalDate getDateValidee() {
         return dateValidee;
     }
 
-    public void setDateValidee(Date dateValidee) {
+    public void setDateValidee(LocalDate dateValidee) {
         this.dateValidee = dateValidee;
     }
 

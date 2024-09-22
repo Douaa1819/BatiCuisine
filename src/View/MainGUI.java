@@ -1,20 +1,15 @@
 package View;
+import Services.impl.DevisServiceImpl;
 import Services.impl.ProjetServiceImpl;
-import Services.interfaces.ClientService;
-import Services.interfaces.MainOeuvreService;
-import Services.interfaces.MateriauxService;
-import Services.interfaces.ProjetService;
+import Services.interfaces.*;
 import enums.EtatProjet;
-import models.Client;
-import models.MainOeuvre;
-import models.Materiaux;
-import models.Projet;
+import models.*;
 import utils.ValidationUtils;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import static enums.TypeComposant.MAIN_D_OEUVRE;
 import static enums.TypeComposant.MATERIAUX;
@@ -24,16 +19,18 @@ public class MainGUI {
     private static ClientService clientService;
     private static MateriauxService materiauxService ;
     private static MainOeuvreService mainOeuvreService ;
-    public MainGUI(ClientService clientService,MateriauxService materiauxService,MainOeuvreService mainOeuvreService) {
+  private static  DevisService devisService;
+    public MainGUI(ClientService clientService,MateriauxService materiauxService,MainOeuvreService mainOeuvreService, DevisService devisService) {
         this.clientService = clientService;
         this.materiauxService = materiauxService;
         this.mainOeuvreService = mainOeuvreService;
+        this.devisService = devisService;
     }
 
 
+    private  final static ProjetService projetService = new ProjetServiceImpl();
 
-
-    public static void afficherMenuPrincipal() {
+    public static void afficherMenuPrincipal() throws SQLException {
         System.out.println("=== Bienvenue dans l'application de gestion des projets de rénovation de cuisines ===");
         boolean continuer = true;
 
@@ -56,8 +53,9 @@ public class MainGUI {
                     afficherProjetsExistants();
                     break;
 
-                case 3:
-//                    calculerCoutProjet();
+                case 3:// Récupérez la liste ici
+                    List<Projet> projets = projetService.getAllProjets();
+                    choisirNomEtCalculerCoutTotal(projets);
                     break;
                 case 4:
 //                    afficherClients();
@@ -125,7 +123,11 @@ public class MainGUI {
                 String clientIdString = ValidationUtils.readString();
                 UUID clientId = UUID.fromString(clientIdString);
                 clientService.getClientById(clientId).ifPresentOrElse(client -> {
-                    creerProjetPourClient(client.getId());
+                    try {
+                        creerProjetPourClient(client.getId());
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 }, () -> System.out.println("Client non trouvé."));
             }
         }
@@ -138,8 +140,10 @@ public class MainGUI {
         System.out.print("Entrez le nom du client : ");
         String nomClient = ValidationUtils.readValidName();
         System.out.print("Entrez l'adresse du client : ");
+
         String adresseClient = ValidationUtils.readString();
         System.out.print("Entrez le numéro de téléphone du client : ");
+
         String numeroTelephone = ValidationUtils.readString();
         System.out.print("Est-ce que ce client est professionnel ? (1 pour oui, 0 pour non, par défaut 0) : ");
         int choix = ValidationUtils.readInt();
@@ -151,7 +155,9 @@ public class MainGUI {
 
             System.out.println("Nouveau client ajouté avec succès !");
             System.out.println("Nom: " + createdClient.getNom());
+
             System.out.println("Adresse: " + createdClient.getAdress());
+
             System.out.println("Téléphone: " + createdClient.getPhone());
             System.out.println("ID: " + createdClient.getId());
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
@@ -181,11 +187,13 @@ public class MainGUI {
     }
 
 
-    public static void creerProjetPourClient(UUID clientId) {
+    public static void creerProjetPourClient(UUID clientId) throws SQLException {
         System.out.println("\n--- Création d'un Nouveau Projet ---");
         System.out.println("Entrez le nom du projet : ");
+
         String nomProjet = ValidationUtils.readValidName();
         System.out.println("Entrez la surface de la cuisine (en m²) : ");
+
         double surfaceCuisine = ValidationUtils.readDouble();
 
 
@@ -205,19 +213,24 @@ public class MainGUI {
     }
 
 
-    public static void ajouterMateriaux(Projet projet) {
+    public static void ajouterMateriaux(Projet projet) throws SQLException {
         System.out.println("\n--- Ajout des matériaux ---");
         while (true) {
             System.out.print("Entrez le nom du matériau : ");
             String nomMateriau = ValidationUtils.readString();
+
             System.out.println("Nom du matériau entré : " + nomMateriau);
             System.out.println("Entrez la quantité de ce matériau (en m²): ");
+
             double quantite = ValidationUtils.readDouble();
             System.out.println("Entrez le coût unitaire de ce matériau (€/m²) : ");
+
             double coutUnitaire = ValidationUtils.readDouble();
             System.out.println("Entrez le taux de tva (%) : ");
+
             double tva = ValidationUtils.readDouble();
             System.out.println("Entrez le coût de transport de ce matériau (€) : ");
+
             double coutTransport = ValidationUtils.readDouble();
             System.out.println("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
             double coefficientQualite = ValidationUtils.readDouble();
@@ -239,26 +252,32 @@ public class MainGUI {
     }
 
 
-    public static void ajouterMainOeuvre(Projet projet) {
+    public static void ajouterMainOeuvre(Projet projet) throws SQLException {
         System.out.println("\n--- Ajout de la main-d'œuvre ---");
         boolean ajouterAutre = true;
         while (ajouterAutre) {
             System.out.println("Entrez le nom du main-d'œuvre : ");
             String nomMainDoeuvre = ValidationUtils.readString();
+
             System.out.println("Entrez le taux de tva (%) : ");
             double tva = ValidationUtils.readDouble();
+
             System.out.print("Entrez le taux horaire de cette main-d'œuvre (€/h) : ");
             double tauxHoraire = ValidationUtils.readDouble();
+
             System.out.print("Entrez le nombre d'heures travaillées : ");
             double heuresTravail = ValidationUtils.readDouble();
+
             System.out.print("Entrez le facteur de productivité (1.0 = standard, > 1.1 = haute productivité) : ");
             double productivite = ValidationUtils.readDouble();
             try {
 
                 MainOeuvre mainOeuvre = new MainOeuvre(UUID.randomUUID(), nomMainDoeuvre, tva, MAIN_D_OEUVRE, projet.getId(), tauxHoraire, heuresTravail, productivite);
                 mainOeuvreService.ajouterMainOeuvre(mainOeuvre);
+
                 System.out.println("Heures de travail: " + heuresTravail);
                 System.out.println("Facteur de productivité: " + productivite);
+
                 System.out.println("Main-d'œuvre ajoutée avec succès !");
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);
@@ -271,7 +290,7 @@ public class MainGUI {
     }
 
 
-    public static void calculerCoutTotal(Projet projet) {
+    public static void calculerCoutTotal(Projet projet) throws SQLException {
         System.out.println("\n--- Calcul du coût total ---");
 
         // Demande de la TVA
@@ -373,7 +392,6 @@ public class MainGUI {
         double coutTotalFinal = coutTotalAvantMarge + margeBeneficiaire;
         System.out.printf("**Coût total final du projet : %.2f €**%n", coutTotalFinal);
 
-
         projet.setCoutTotal(coutTotalFinal);
         ProjetService projetService = new ProjetServiceImpl();
         try {
@@ -382,9 +400,75 @@ public class MainGUI {
         } catch (SQLException e) {
             System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
         }
-
-
+        enregistrerDevis(projet);
     }
+
+
+
+
+    private static void enregistrerDevis(Projet projet) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("--- Enregistrement du Devis ---");
+        System.out.print("Entrez la date d'émission du devis (format : jj/mm/aaaa) : ");
+        String dateEmissionStr = scanner.nextLine();
+        LocalDate dateEmission = LocalDate.parse(dateEmissionStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        System.out.print("Entrez la date de validité du devis (format : jj/mm/aaaa) : ");
+        String dateValideeStr = scanner.nextLine();
+        LocalDate dateValidee = LocalDate.parse(dateValideeStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+        System.out.print("Souhaitez-vous enregistrer le devis ? (y/n) : ");
+        String reponse = scanner.nextLine();
+
+        boolean accepte = "y".equalsIgnoreCase(reponse);
+
+        // Créer le devis
+        Devis devis = new Devis(UUID.randomUUID(), dateEmission, dateValidee, accepte, projet.getId());
+
+        devisService.save(devis);
+
+        try {
+            if (accepte) {
+                projet.setEtatProjet(EtatProjet.TERMINEE);
+                projetService.mettreAJourProjet(projet);
+                System.out.println("Devis enregistré avec succès ! Projet marqué comme terminé.");
+            } else {
+                projet.setEtatProjet(EtatProjet.ANNULEE);
+                projetService.mettreAJourProjet(projet);
+                System.out.println("Devis non enregistré. Projet marqué comme annulé.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
+        }
+    }
+
+        public static void choisirNomEtCalculerCoutTotal(List<Projet> projets) throws SQLException {
+        if (projets.isEmpty()) {
+            System.out.println("Aucun projet disponible.");
+            return;
+        }
+
+        System.out.println("--- Choisissez un projet ---");
+        for (int i = 0; i < projets.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, projets.get(i).getNomProjet());
+        }
+
+        System.out.print("Entrez le numéro du projet : ");
+        int choix = ValidationUtils.readInt();
+
+        if (choix < 1 || choix > projets.size()) {
+            System.out.println("Choix invalide. Veuillez réessayer.");
+            return;
+        }
+
+        Projet projetChoisi = projets.get(choix - 1);
+        System.out.println("Vous avez choisi le projet : " + projetChoisi.getNomProjet());
+
+            enregistrerDevis(projetChoisi);
+//        calculerCoutTotal(projetChoisi);
+    }
+
 
 
 
@@ -402,10 +486,17 @@ public class MainGUI {
             if (projets.isEmpty()) {
                 System.out.println("Aucun projet existant.");
             } else {
+
+                HashMap<String, Projet> projetMap = new HashMap<>();
+                for (Projet projet : projets) {
+                    projetMap.put(projet.getNomProjet(), projet);
+                }
+
                 System.out.printf("%-30s %-10s %-20s %-15s %-10s%n", "Nom", "Surface", "Marge Bénéficiaire", "Coût Total", "État");
                 System.out.println("---------------------------------------------------------------------------------------------");
 
-                for (Projet projet : projets) {
+                for (Map.Entry<String, Projet> entry : projetMap.entrySet()) {
+                    Projet projet = entry.getValue();
                     System.out.printf("%-30s %-10.2f %-20.2f %-15.2f %-10s%n",
                             projet.getNomProjet(),
                             projet.getSurface(),
@@ -418,6 +509,7 @@ public class MainGUI {
             System.err.println("Erreur lors de la récupération des projets : " + e.getMessage());
         }
     }
+
 }
 
 
