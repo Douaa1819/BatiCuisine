@@ -75,9 +75,9 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
                         resultSet.getDouble("tva"),
                         TypeComposant.valueOf(resultSet.getString("typeComposant")),
                         (UUID) resultSet.getObject("projet_id"),
-                        resultSet.getDouble("tauxHoraire"),
-                        resultSet.getDouble("heuresTravaillees"),
-                        resultSet.getDouble("productivite")
+                        resultSet.getDouble("tauxhoraire"),
+                        resultSet.getDouble("heurestravail"),
+                        resultSet.getDouble("productiviteouvrier")
                 );
                 mainOeuvreList.add(mainOeuvre);
             }

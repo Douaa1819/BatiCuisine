@@ -80,7 +80,7 @@ public class MateriauxDAOImpl implements MateriauxDAO {
                         (UUID) resultSet.getObject("projet_id"),
                         resultSet.getDouble("coutunitaire"),
                         resultSet.getDouble("quantite"),
-                        resultSet.getDouble("coutTransport"),
+                        resultSet.getDouble("couttransport"),
                         resultSet.getDouble("coefficientQualite")
                 );
                 materiauxList.add(materiaux);

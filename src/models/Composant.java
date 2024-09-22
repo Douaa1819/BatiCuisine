@@ -52,6 +52,7 @@ public class Composant {
     }
 
     public UUID getProjetId() {
+
         return projetId;
     }
 
