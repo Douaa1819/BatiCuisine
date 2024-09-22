@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ProjetDAOImpl implements ProjetDAO {
     private final Connection connection;
@@ -60,39 +61,58 @@ public class ProjetDAOImpl implements ProjetDAO {
 
     @Override
     public List<Projet> getAllProjets() throws SQLException {
-        List<Projet> projets = new ArrayList<>();
         String sql = "SELECT * FROM projet";
         try (PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                projets.add(new Projet(
-                        UUID.fromString(resultSet.getString("id")),
-                        resultSet.getString("nomprojet"),
-                        resultSet.getDouble("surface"),
-                        resultSet.getDouble("margebeneficiaire"),
-                        resultSet.getDouble("couttotal"),
-                        EtatProjet.valueOf(resultSet.getString("etatprojet")),
-                        resultSet.getDouble("tva"),
-                        UUID.fromString(resultSet.getString("client_id"))
-                ));
-            }
+
+            return resultSetToStream(resultSet)
+                    .map(rs -> {
+                        try {
+                            return new Projet(
+                                    UUID.fromString(rs.getString("id")),
+                                    rs.getString("nomprojet"),
+                                    rs.getDouble("surface"),
+                                    rs.getDouble("margebeneficiaire"),
+                                    rs.getDouble("couttotal"),
+                                    EtatProjet.valueOf(rs.getString("etatprojet")),
+                                    rs.getDouble("tva"),
+                                    UUID.fromString(rs.getString("client_id"))
+                            );
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
+                    .toList();
         }
-        return projets;
     }
+    private Stream<ResultSet> resultSetToStream(ResultSet resultSet) throws SQLException {
+        List<ResultSet> results = new ArrayList<>();
+        while (resultSet.next()) {
+            results.add(resultSet);
+        }
+        return results.stream();
+    }
+
 
     @Override
     public void update(Projet projet) throws SQLException {
-        String sql = "UPDATE projet SET nomprojet = ?, surface = ?, margebeneficiaire = ?, couttotal = ?, etatprojet = ?, tva = ? WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, projet.getNomProjet());
-            statement.setDouble(2, projet.getSurface());
-            statement.setDouble(3, projet.getMargeBeneficiaire());
-            statement.setDouble(4, projet.getCoutTotal());
-            statement.setObject(5, projet.getEtatProjet().name() , java.sql.Types.OTHER);
-            statement.setDouble(6, projet.getTva());
-            statement.setObject(7, projet.getId());
-            statement.executeUpdate();
-        }
+        Optional<Projet> projetOptional = getProjetById(projet.getId());
+        projetOptional.ifPresent(existingProjet -> {
+            String sql = "UPDATE projet SET nomprojet = ?, surface = ?, margebeneficiaire = ?, couttotal = ?, etatprojet = ?, tva = ? WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, projet.getNomProjet());
+                statement.setDouble(2, projet.getSurface());
+                statement.setDouble(3, projet.getMargeBeneficiaire());
+                statement.setDouble(4, projet.getCoutTotal());
+                statement.setObject(5, projet.getEtatProjet().name(), java.sql.Types.OTHER);
+                statement.setDouble(6, projet.getTva());
+                statement.setObject(7, projet.getId());
+                statement.executeUpdate();
+                System.out.println("Projet mis à jour avec succès.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 }
