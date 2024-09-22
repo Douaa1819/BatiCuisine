@@ -1,5 +1,6 @@
 package utils;
 
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
@@ -45,6 +46,7 @@ public class ValidationUtils {
      * @return Le double entré par l'utilisateur.
      */
     public static double readDouble() {
+        scanner.useLocale(Locale.US);
         while (true) {
             if (scanner.hasNextDouble()) {
                 double value = scanner.nextDouble();
@@ -56,6 +58,8 @@ public class ValidationUtils {
             }
         }
     }
+
+
 
 
     /**
