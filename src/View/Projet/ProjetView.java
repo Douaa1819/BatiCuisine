@@ -12,6 +12,7 @@ import utils.ValidationUtils;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProjetView {
 
@@ -32,7 +33,8 @@ public class ProjetView {
         System.out.println("\n--- Recherche de client ---");
         System.out.println("Souhaitez-vous chercher un client existant ou en ajouter un nouveau ?");
         System.out.println("1. Chercher un client existant");
-        System.out.println("2. Ajouter un nouveau client");
+        System.out.println("2. Afficher tous les client");
+        System.out.println("3. Ajouter un nouveau client");
         System.out.print("Choisissez une option : ");
 
         int choixClient = ValidationUtils.readInt();
@@ -43,7 +45,13 @@ public class ProjetView {
                 ClientView clientView = new ClientView(clientService, materiauxService, mainOeuvreService, devisService);
                 clientView.rechercherClient();
                 break;
+
             case 2:
+                clientView = new ClientView(clientService, materiauxService, mainOeuvreService, devisService);
+                clientView.afficherClients();
+                break;
+
+            case 3:
                  clientView = new ClientView(clientService, materiauxService, mainOeuvreService, devisService);
                 clientView.ajouterNouveauClient();
                 break;
@@ -271,36 +279,52 @@ public class ProjetView {
         enregistrerDevis(projetChoisi);
     }
 
-    public  void afficherProjetsExistants() {
+    public void afficherProjetsExistants() {
         System.out.println("\n--- Afficher les projets existants ---");
-        ProjetServiceImpl projetService = new ProjetServiceImpl();
 
         try {
             List<Projet> projets = projetService.getAllProjets();
             if (projets.isEmpty()) {
                 System.out.println("Aucun projet existant.");
             } else {
+                System.out.printf("%-30s %-10s %-20s %-15s %-10s %-20s %-20s%n",
+                        "Nom", "Surface", "Marge Bénéficiaire", "Coût Total", "État", "Main d'œuvre", "Matériaux");
+                System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
-                HashMap<String, Projet> projetMap = new HashMap<>();
                 for (Projet projet : projets) {
-                    projetMap.put(projet.getNomProjet(), projet);
-                }
 
-                System.out.printf("%-30s %-10s %-20s %-15s %-10s%n", "Nom", "Surface", "Marge Bénéficiaire", "Coût Total", "État");
-                System.out.println("---------------------------------------------------------------------------------------------");
+                    List<MainOeuvre> mainOeuvres = mainOeuvreService.getMainOeuvreByProjetId(projet.getId());
+                    List<Materiaux> materiauxList = materiauxService.getMateriauxByProjetId(projet.getId());
 
-                for (Map.Entry<String, Projet> entry : projetMap.entrySet()) {
-                    Projet projet = entry.getValue();
-                    System.out.printf("%-30s %-10.2f %-20.2f %-15.2f %-10s%n",
+                    String mainOeuvresString = mainOeuvres.stream()
+                            .map(MainOeuvre::getNom)
+                            .collect(Collectors.joining(", "));
+                    String materiauxString = materiauxList.stream()
+                            .map(Materiaux::getNom)
+                            .collect(Collectors.joining(", "));
+
+                    System.out.printf("%-30s %-10.2f %-20.2f %-15.2f %-10s %-20s %-20s%n",
                             projet.getNomProjet(),
                             projet.getSurface(),
                             projet.getMargeBeneficiaire(),
                             projet.getCoutTotal(),
-                            projet.getEtatProjet());
+                            projet.getEtatProjet(),
+                            mainOeuvresString.isEmpty() ? "Aucune" : mainOeuvresString,
+                            materiauxString.isEmpty() ? "Aucun" : materiauxString);
+
+                    System.out.println("");
+                    System.out.println("|-----Main d'œuvre-------| : " + mainOeuvres);
+                    System.out.println("|-----Matériaux-----------| : " + materiauxList);
+                    System.out.println("");
+                    System.out.println("____________________________________________________________________________________________________________________________________________________________________");
                 }
+
+
             }
         } catch (SQLException e) {
             System.err.println("Erreur lors de la récupération des projets : " + e.getMessage());
         }
     }
+
+
 }
