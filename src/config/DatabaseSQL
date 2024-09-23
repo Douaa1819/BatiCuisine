@@ -1,0 +1,67 @@
+
+    CREATE DATABASE Bati_cuisine;
+
+-- Extension nécessaire pour générer des UUID
+    CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+            CREATE TYPE etat_projet AS ENUM ('Encours', 'Terminée', 'Annulée');
+    CREATE TYPE type_composant AS ENUM ('main-d-œuvre', 'matériaux');
+
+
+    CREATE TABLE Client (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nom VARCHAR(100),
+    adresse VARCHAR(255),
+    telephone VARCHAR(20),
+    estProfessionnel BOOLEAN
+);
+
+    CREATE TABLE Projet (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nomProjet VARCHAR(100),
+    surface DOUBLE PRECISION,
+    margeBeneficiaire DOUBLE PRECISION,
+    coutTotal DOUBLE PRECISION,
+    etatProjet etat_projet,
+    tva DOUBLE PRECISION,
+    client_id UUID,
+    FOREIGN KEY (client_id) REFERENCES Client(id) ON DELETE CASCADE
+);
+
+
+    CREATE TABLE Composant (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    nom VARCHAR(100),
+    tauxTVA DOUBLE PRECISION
+    typeComposant type_composant,
+    projet_id UUID,
+    FOREIGN KEY (projet_id) REFERENCES Projet(id) ON DELETE CASCADE
+);
+
+
+    CREATE TABLE MainOeuvre (
+            tauxHoraire DOUBLE PRECISION,
+            heuresTravail DOUBLE PRECISION,
+            productiviteOuvrier DOUBLE PRECISION
+    ) INHERITS (Composant);
+
+
+    CREATE TABLE Materiaux (
+            coutUnitaire DOUBLE PRECISION,
+            quantite DOUBLE PRECISION,
+            coutTransport DOUBLE PRECISION,
+            coefficientQualite DOUBLE PRECISION,
+
+            ) INHERITS (Composant);
+
+
+    CREATE TABLE Devis (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    dateEmission DATE,
+    dateValidee DATE,
+    accepte BOOLEAN,
+    projet_id UUID UNIQUE,
+    FOREIGN KEY (projet_id) REFERENCES Projet(id) ON DELETE CASCADE
+);
+
+}

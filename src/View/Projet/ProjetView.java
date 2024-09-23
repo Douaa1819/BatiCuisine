@@ -66,11 +66,11 @@ public class ProjetView {
 
     public  void creerProjetPourClient(UUID clientId) throws SQLException {
         System.out.println("\n--- Création d'un Nouveau Projet ---");
+
         System.out.println("Entrez le nom du projet : ");
-
         String nomProjet = ValidationUtils.readValidName();
-        System.out.println("Entrez la surface de la cuisine (en m²) : ");
 
+        System.out.println("Entrez la surface de la cuisine (en m²) : ");
         double surfaceCuisine = ValidationUtils.readDouble();
 
 
@@ -96,10 +96,9 @@ public class ProjetView {
 
     public  void calculerCoutTotal(Projet projet) throws SQLException {
         System.out.println("\n--- Calcul du coût total ---");
+
         System.out.print("Souhaitez-vous appliquer une TVA au projet ? (y/n) : ");
         String reponseTVA = ValidationUtils.readString();
-
-
         if ("y".equalsIgnoreCase(reponseTVA)) {
             System.out.print("Entrez le pourcentage de TVA (%) : ");
             double tva = ValidationUtils.readDouble();

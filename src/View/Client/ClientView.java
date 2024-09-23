@@ -64,16 +64,17 @@ import java.util.UUID;
 
     public void ajouterNouveauClient() {
         System.out.println("\n--- Ajout d'un nouveau client ---");
+
         System.out.print("Entrez le nom du client : ");
         String nomClient = ValidationUtils.readValidName();
-        System.out.print("Entrez l'adresse du client : ");
 
+        System.out.print("Entrez l'adresse du client : ");
         String adresseClient = ValidationUtils.readString();
         System.out.print("Entrez le numéro de téléphone du client : ");
 
-        String numeroTelephone = ValidationUtils.readString();
+        String numeroTelephone = ValidationUtils.readPhoneNumber();
         System.out.print("Est-ce que ce client est professionnel ? (1 pour oui, 0 pour non, par défaut 0) : ");
-        int choix = ValidationUtils.readInt();
+        int choix = ValidationUtils.readProfessionnelInput() ;
         boolean estProfessionnel = (choix == 1);
 
         try {
@@ -81,12 +82,12 @@ import java.util.UUID;
             Client createdClient = clientService.createClient(client);
 
             System.out.println("Nouveau client ajouté avec succès !");
+
             System.out.println("Nom: " + createdClient.getNom());
-
             System.out.println("Adresse: " + createdClient.getAdress());
-
             System.out.println("Téléphone: " + createdClient.getPhone());
             System.out.println("ID: " + createdClient.getId());
+
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
             String reponse = ValidationUtils.readString();
             if ("y".equalsIgnoreCase(reponse)) {
@@ -97,7 +98,6 @@ import java.util.UUID;
             System.out.println("Erreur lors de l'ajout du client : " + e.getMessage());
             e.printStackTrace();
         }
-
     }
 
     public  void afficherClients() {

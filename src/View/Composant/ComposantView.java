@@ -20,6 +20,7 @@ public class ComposantView {
     private static   MainOeuvreService mainOeuvreService ;
     private static ClientService clientService;
     private static DevisService devisService;
+
     public ComposantView(ClientService clientService,MateriauxService materiauxService,MainOeuvreService mainOeuvreService, DevisService devisService) {
         this.materiauxService = materiauxService;
         this.mainOeuvreService = mainOeuvreService;
@@ -35,19 +36,20 @@ public class ComposantView {
             System.out.print("Entrez le nom du matériau : ");
             String nomMateriau = ValidationUtils.readString();
 
-            System.out.println("Nom du matériau entré : " + nomMateriau);
+
             System.out.println("Entrez la quantité de ce matériau (en m²): ");
-
             double quantite = ValidationUtils.readDouble();
+
+
             System.out.println("Entrez le coût unitaire de ce matériau (€/m²) : ");
-
             double coutUnitaire = ValidationUtils.readDouble();
+
             System.out.println("Entrez le taux de tva (%) : ");
+            double tva = ValidationUtils.readValidTva();
 
-            double tva = ValidationUtils.readDouble();
             System.out.println("Entrez le coût de transport de ce matériau (€) : ");
-
             double coutTransport = ValidationUtils.readDouble();
+
             System.out.println("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
             double coefficientQualite = ValidationUtils.readDouble();
             try {
@@ -76,7 +78,7 @@ public class ComposantView {
             String nomMainDoeuvre = ValidationUtils.readString();
 
             System.out.println("Entrez le taux de tva (%) : ");
-            double tva = ValidationUtils.readDouble();
+            double tva = ValidationUtils.readValidTva();
 
             System.out.print("Entrez le taux horaire de cette main-d'œuvre (€/h) : ");
             double tauxHoraire = ValidationUtils.readDouble();

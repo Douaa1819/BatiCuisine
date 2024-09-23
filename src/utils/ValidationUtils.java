@@ -34,10 +34,15 @@ public class ValidationUtils {
     public static int readInt() {
         while (true) {
             try {
-                return scanner.nextInt();
+                int value = scanner.nextInt();
+                if (value <= 0) {
+                    System.out.println("Veuillez entrer un nombre entier supérieur à zéro.");
+                    continue;
+                }
+                return value;
             } catch (InputMismatchException e) {
                 System.out.println("Veuillez entrer un nombre entier valide.");
-                scanner.next(); // Consomme la valeur invalide
+                scanner.next();
             }
         }
     }
@@ -71,9 +76,7 @@ public class ValidationUtils {
      * @param input La chaîne de caractères à vérifier.
      * @return True si la chaîne est null ou vide, false sinon.
      */
-    public static boolean isNullOrEmpty(String input) {
-        return input == null || input.trim().isEmpty();
-    }
+
 
     private static boolean isValidName(String input) {
         return input != null && input.matches("[a-zA-Z\\s]+");
@@ -89,38 +92,42 @@ public class ValidationUtils {
     }
 
 
-    /**
-     * Convertit une chaîne de caractères en entier, en renvoyant une valeur par défaut
-     * si la conversion échoue.
-     *
-     * @param input La chaîne de caractères à convertir.
-     * @param defaultValue La valeur par défaut à retourner en cas d'échec de la conversion.
-     * @return L'entier converti ou la valeur par défaut.
-     */
-    public static int parseIntOrDefault(String input, int defaultValue) {
-        try {
-            return Integer.parseInt(input.trim());
-        } catch (NumberFormatException e) {
-            return defaultValue;
+    public static String readPhoneNumber() {
+        while (true) {
+            String numeroTelephone = scanner.nextLine();
+            if (numeroTelephone.length() < 10) {
+                System.out.println("Le numéro de téléphone doit contenir au moins 10 caractères.");
+                continue;
+            }
+            if (!numeroTelephone.matches("[0-9\\s\\-\\.\\+()]*")) {
+                System.out.println("Le numéro de téléphone ne doit contenir que des chiffres et des caractères spéciaux autorisés (espace, tiret, point, plus, parenthèses).");
+                continue;
+            }
+
+            return numeroTelephone;
         }
     }
 
-    /**
-     * Convertit une chaîne de caractères en double, en renvoyant une valeur par défaut
-     * si la conversion échoue.
-     *
-     * @param input La chaîne de caractères à convertir.
-     * @param defaultValue La valeur par défaut à retourner en cas d'échec de la conversion.
-     * @return Le double converti ou la valeur par défaut.
-     */
-    public static double parseDoubleOrDefault(String input, double defaultValue) {
-        try {
+    public static int readProfessionnelInput() {
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                return 0;
+            }
+            if (input.equals("0")) {
+                return 0;
+            } else if (input.equals("1")) {
+                return 1;
+            }
 
-            return Double.parseDouble(input.trim());
-        } catch (NumberFormatException e) {
-            return defaultValue;
+            System.out.println("Veuillez entrer 0 ou 1.");
         }
     }
+
+
+
+
+
     public static LocalDate readDate() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -131,6 +138,23 @@ public class ValidationUtils {
                 System.out.println("Erreur : format de date invalide. Veuillez réessayer (format : jj/mm/aaaa) : ");
             }
         }
+    }
+
+
+    public static double readValidTva() {
+        double tva = -1;
+        while (tva <= 0) {
+            if (scanner.hasNextDouble()) {
+                tva = scanner.nextDouble();
+                if (tva <= 0) {
+                    System.out.println("Erreur : le taux de TVA doit être supérieur à 0.");
+                }
+            } else {
+                System.out.println("Erreur : veuillez entrer un nombre valide.");
+                scanner.next();
+            }
+        }
+        return tva;
     }
 
 }
