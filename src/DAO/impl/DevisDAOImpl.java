@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DevisDAOImpl implements DevisDAO {
@@ -32,21 +33,22 @@ public class DevisDAOImpl implements DevisDAO {
     }
 
     @Override
-    public Devis getById(UUID id) throws SQLException {
+    public Optional<Devis> getById(UUID id) throws SQLException {
         String sql = "SELECT * FROM Devis WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                return new Devis(
+                Devis devis = new Devis(
                         (UUID) resultSet.getObject("id"),
                         resultSet.getDate("dateEmission").toLocalDate(),
                         resultSet.getDate("dateValidee").toLocalDate(),
                         resultSet.getBoolean("accepte"),
                         (UUID) resultSet.getObject("projet_id")
                 );
+                return Optional.of(devis);
             }
         }
-        return null;
+        return Optional.empty();
     }
 }

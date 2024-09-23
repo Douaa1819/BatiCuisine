@@ -10,10 +10,7 @@ import Repository.impl.ClientRepositoryImpl;
 import Repository.impl.DevisRepositoryImpl;
 import Repository.impl.MainOeuvreRepositoryImpl;
 import Repository.impl.MateriauxRepositoryImpl;
-import Services.impl.ClientServiceImpl;
-import Services.impl.DevisServiceImpl;
-import Services.impl.MainOeuvreServiceImpl;
-import Services.impl.MateriauxServiceImpl;
+import Services.impl.*;
 import Services.interfaces.ClientService;
 import Services.interfaces.DevisService;
 import Services.interfaces.MainOeuvreService;
@@ -28,15 +25,13 @@ import java.sql.SQLException;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) throws SQLException {
-        ClientDAO clientDAO = new ClientDAOImpl();
-        MainOeuvreDAO mainOeuvreDAO = new MainOeuvreDAOImpl();
-        MateriauxDAO materiauxDAO = new MateriauxDAOImpl();
-        DevisDAO devisDAO = new DevisDAOImpl();
-        ClientService clientService = new ClientServiceImpl(new ClientRepositoryImpl(clientDAO));
-        MainOeuvreService mainOeuvreService = new MainOeuvreServiceImpl(new MainOeuvreRepositoryImpl(mainOeuvreDAO));
-        MateriauxService materiauxService = new MateriauxServiceImpl(new MateriauxRepositoryImpl(materiauxDAO));
-        DevisService devisService = new DevisServiceImpl(new DevisRepositoryImpl(devisDAO));
-        MainGUI mainGUI = new MainGUI(clientService, materiauxService, mainOeuvreService,devisService);
+        ServiceManager serviceManager = new ServiceManager();
+        MainGUI mainGUI = new MainGUI(
+                serviceManager.getClientService(),
+                serviceManager.getMateriauxService(),
+                serviceManager.getMainOeuvreService(),
+                serviceManager.getDevisService()
+        );
         mainGUI.afficherMenuPrincipal();
     }
 }

@@ -4,6 +4,7 @@ import Repository.interfaces.DevisRepository;
 import Services.interfaces.DevisService;
 import models.Devis;
 
+import java.util.Optional;
 import java.util.UUID;
 
 public class DevisServiceImpl implements DevisService {
@@ -19,7 +20,7 @@ public class DevisServiceImpl implements DevisService {
     }
 
     @Override
-    public Devis getById(UUID id) {
+    public Optional<Devis> getById(UUID id) {
         return devisRepository.getById(id);
     }
 }

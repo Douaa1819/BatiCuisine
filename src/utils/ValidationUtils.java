@@ -1,5 +1,8 @@
 package utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Scanner;
 import java.util.InputMismatchException;
@@ -118,4 +121,16 @@ public class ValidationUtils {
             return defaultValue;
         }
     }
+    public static LocalDate readDate() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            String dateStr = scanner.nextLine();
+            try {
+                return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } catch (DateTimeParseException e) {
+                System.out.println("Erreur : format de date invalide. Veuillez réessayer (format : jj/mm/aaaa) : ");
+            }
+        }
+    }
+
 }
