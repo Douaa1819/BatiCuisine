@@ -20,8 +20,14 @@
 4. **Devis** : Génération de devis détaillés avant travaux.
 
 ## 🚀 Exécution du projet
-Cloner le dépôt et exécuter le projet :
+1-Cloner le dépôt et exécuter le projet :
 git clone https://github.com/Douaa1819/BatiCuisine.git
+
+2-Naviguer vers le répertoire de sortie :
+cd Bati-Cuisine/out/artifacts/Bati_Cuisine_jar
+
+3-Exécuter le fichier .jar
+java -jar Bati-Cuisine.jar
 
 ## 📝 Licence
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
