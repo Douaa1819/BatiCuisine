@@ -22,26 +22,14 @@ public class MainOeuvreServiceImpl implements MainOeuvreService {
         mainOeuvreRepository.save(mainOeuvre);
     }
 
-    @Override
-    public Optional<MainOeuvre> trouverMainOeuvreParId(UUID id) {
-        return mainOeuvreRepository.findById(id);
-    }
+
 
     @Override
     public List<MainOeuvre> getMainOeuvreByProjetId(UUID projetId) {
         return mainOeuvreRepository.getMainOeuvreByProjetId(projetId);
     }
 
-    @Override
-    public double calculerCoutTotal(UUID projetId) {
-        return mainOeuvreRepository.calculerCoutTotal(projetId);
-    }
 
-
-    @Override
-    public double calculerCoutTotalAvantTVA(UUID projetId) {
-        return mainOeuvreRepository.calculerCoutTotalAvantTVA(projetId);
-    }
 
 
 }

@@ -24,26 +24,11 @@ public class MainOeuvreRepositoryImpl implements MainOeuvreRepository {
     }
 
 
-    @Override
-
-    public Optional<MainOeuvre>findById(UUID id){
-
-        return mainOeuvreDAO.findById(id);
-    }
-
 
     @Override
     public List<MainOeuvre> getMainOeuvreByProjetId(UUID projetId) {
         return mainOeuvreDAO.getMainOeuvreByProjetId(projetId);
     }
 
-    @Override
-    public double calculerCoutTotal(UUID projetId) {
-        return mainOeuvreDAO.calculerCoutTotal(projetId);
-    }
 
-    @Override
-    public double calculerCoutTotalAvantTVA(UUID projetId) {
-        return mainOeuvreDAO.calculerCoutTotalAvantTVA(projetId);
-    }
 }

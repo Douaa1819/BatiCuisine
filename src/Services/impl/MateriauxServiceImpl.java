@@ -21,25 +21,13 @@ public class MateriauxServiceImpl implements MateriauxService {
         materiauxRepository.save(materiaux);
     }
 
-    @Override
-    public Optional<Materiaux> trouverMateriauxParId(UUID id) {
-        return materiauxRepository.findById(id);
-    }
 
     @Override
     public List<Materiaux> getMateriauxByProjetId(UUID projetId) {
         return materiauxRepository.getMateriauxByProjetId(projetId);
     }
 
-    @Override
-    public double calculerCoutTotal(UUID projetId) {
-        return materiauxRepository.calculerCoutTotal(projetId);
-    }
 
-    @Override
-    public double calculerCoutTotalAvantTVA(UUID projetId) {
-        return materiauxRepository.calculerCoutTotalAvantTVA(projetId);
-    }
 
 
 }

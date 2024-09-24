@@ -9,8 +9,5 @@ import java.util.UUID;
 public interface MainOeuvreService {
 
     void ajouterMainOeuvre(MainOeuvre mainOeuvre);
-    Optional<MainOeuvre> trouverMainOeuvreParId(UUID id);
     List<MainOeuvre> getMainOeuvreByProjetId(UUID projetId);
-    double calculerCoutTotal(UUID projetId);
-    double calculerCoutTotalAvantTVA(UUID projetId);
 }

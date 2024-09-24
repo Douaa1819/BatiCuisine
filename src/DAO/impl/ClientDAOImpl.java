@@ -15,7 +15,7 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
 @Override
-    public Client create(Client client) {
+    public Client createClient(Client client) {
         String sql = "INSERT INTO Client (id, nom, adresse, telephone, estProfessionnel) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setObject(1, client.getId());
@@ -41,7 +41,7 @@ public class ClientDAOImpl implements ClientDAO {
 
 
     @Override
-    public Optional<Client> read(UUID id) {
+    public Optional<Client> getClient(UUID id) {
         String sql = "SELECT * FROM Client WHERE id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setObject(1, id);
@@ -57,7 +57,7 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public List<Client> readAll() {
+    public List<Client> getAllClient() {
         String sql = "SELECT * FROM Client";
         List<Client> clients = new ArrayList<>();
         try (Statement stmt = connection.createStatement();

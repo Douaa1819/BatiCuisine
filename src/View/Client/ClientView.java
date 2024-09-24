@@ -107,8 +107,7 @@ import java.util.UUID;
             System.out.println("Aucun client trouvé.");
         } else {
             for (Client client : clients) {
-                System.out.println("ID: " + client.getId());
-                System.out.println("Nom: " + client.getNom());
+                System.out.println("- Nom: " + client.getNom());
                 System.out.println();
             }
         }

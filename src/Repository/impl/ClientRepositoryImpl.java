@@ -18,17 +18,17 @@ public class ClientRepositoryImpl  implements ClientRepository {
 
     @Override
     public Client save(Client client) {
-        return clientDAO.create(client);
+        return clientDAO.createClient(client);
     }
 
     @Override
     public Optional<Client> findById(UUID id) {
-        return clientDAO.read(id);
+        return clientDAO.getClient(id);
     }
 
     @Override
     public List<Client> findAll() {
-        return clientDAO.readAll();
+        return clientDAO.getAllClient();
     }
 
     @Override

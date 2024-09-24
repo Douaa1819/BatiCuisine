@@ -7,7 +7,6 @@ import models.MainOeuvre;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class MainOeuvreDAOImpl implements MainOeuvreDAO {
@@ -37,30 +36,7 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
         }
     }
 
-    @Override
-    public Optional<MainOeuvre> findById(UUID id) {
-        String query = "SELECT * FROM MainOeuvre WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setObject(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                MainOeuvre mainOeuvre = new MainOeuvre(
-                        (UUID) resultSet.getObject("id"),
-                        resultSet.getString("nom"),
-                        resultSet.getDouble("tauxTVA"),
-                        TypeComposant.valueOf(resultSet.getString("typeComposant")),
-                        (UUID) resultSet.getObject("projet_id"),
-                        resultSet.getDouble("tauxHoraire"),
-                        resultSet.getDouble("heuresTravail"),
-                        resultSet.getDouble("productiviteOuvrier")
-                );
-                return Optional.of(mainOeuvre);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
-    }
+
     @Override
     public List<MainOeuvre> getMainOeuvreByProjetId(UUID projet_id) {
         List<MainOeuvre> mainOeuvreList = new ArrayList<>();
@@ -87,29 +63,5 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
         return mainOeuvreList;
     }
 
-    @Override
-    public double calculerCoutTotal(UUID projetId) {
-        double total = 0.0;
-        List<MainOeuvre> mainOeuvreList = getMainOeuvreByProjetId(projetId);
-        for (MainOeuvre mainOeuvre : mainOeuvreList) {
-            double coutMainOeuvre = mainOeuvre.getTauxHoraire() * mainOeuvre.getHeuresTravail() * mainOeuvre.getProductiviteOuvrier();
-            total += coutMainOeuvre + (coutMainOeuvre * (mainOeuvre.getTva() / 100));
-        }
-        return total;
-    }
-    @Override
-    public double calculerCoutTotalAvantTVA(UUID projetId) {
-        double total = 0.0;
-        String sql = "SELECT SUM(tauxhoraire * heurestravail) FROM mainoeuvre WHERE projet_id = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setObject(1, projetId);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                total = rs.getDouble(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return total;
-    }
+
 }

@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ClientDAO {
-    Client create(Client client);
-    Optional<Client> read(UUID id);
-    List<Client> readAll();
+    Client createClient(Client client);
+    Optional<Client> getClient(UUID id);
+    List<Client> getAllClient();
     List<Client> getClientsByName(String nomClient) throws SQLException;
 
 }

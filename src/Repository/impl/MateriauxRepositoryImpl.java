@@ -26,26 +26,12 @@ public class MateriauxRepositoryImpl implements MateriauxRepository {
     }
 
 
-    @Override
 
-    public Optional<Materiaux>findById(UUID id){
-    return materiauxDAO.findById(id);
-
-    }
 
     @Override
     public List<Materiaux> getMateriauxByProjetId(UUID projetId) {
         return materiauxDAO.getMateriauxByProjetId(projetId);
     }
 
-    @Override
-    public double calculerCoutTotal(UUID projetId) {
-        return materiauxDAO.calculerCoutTotal(projetId);
-    }
 
-
-    @Override
-    public double calculerCoutTotalAvantTVA(UUID projetId) {
-        return materiauxDAO.calculerCoutTotalAvantTVA(projetId);
-    }
 }
