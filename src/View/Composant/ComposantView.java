@@ -28,7 +28,6 @@ public class ComposantView {
         this.devisService=devisService;
     }
 
-    private final static ProjetService projetService = new ProjetServiceImpl();
 
     public  static void ajouterMateriaux(Projet projet) throws SQLException {
         System.out.println("\n--- Ajout des matériaux ---");
@@ -52,17 +51,20 @@ public class ComposantView {
 
             System.out.println("Entrez le coefficient de qualité du matériau (1.0 = standard, > 1.1= haute qualité) : ");
             double coefficientQualite = ValidationUtils.readDouble();
+
             try {
                 Materiaux materiaux = new Materiaux(UUID.randomUUID(), nomMateriau, tva, MATERIAUX, projet.getId(), coutUnitaire, quantite, coutTransport, coefficientQualite);
                 materiauxService.ajouterMateriaux(materiaux);
                 System.out.println("Matériau ajouté avec succès !");
+
             } catch (RuntimeException e) {
                 throw new RuntimeException(e);
             }
 
             System.out.print("Voulez-vous ajouter un autre matériau ? (y/n) : ");
-            String reponse = ValidationUtils.readString();
-            if (!reponse.equalsIgnoreCase("y")) {
+            boolean reponse = ValidationUtils.readYesNo();
+
+            if (!reponse) {
                 ajouterMainOeuvre(projet);
                 break;
             }

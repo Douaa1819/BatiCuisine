@@ -14,6 +14,8 @@ public class ClientDAOImpl implements ClientDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
+
+
 @Override
     public Client createClient(Client client) {
         String sql = "INSERT INTO Client (id, nom, adresse, telephone, estProfessionnel) VALUES (?, ?, ?, ?, ?)";
@@ -57,19 +59,25 @@ public class ClientDAOImpl implements ClientDAO {
     }
 
     @Override
-    public List<Client> getAllClient() {
+    public Map<UUID, Client> getAllClient() {
         String sql = "SELECT * FROM Client";
-        List<Client> clients = new ArrayList<>();
+        Map<UUID, Client> clientsMap = new HashMap<>();
+
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+
+            // Parcourt les résultats et ajoute chaque client dans la HashMap
             while (rs.next()) {
-                clients.add(mapResultSetToClient(rs));
+                Client client = mapResultSetToClient(rs);
+                clientsMap.put(client.getId(), client);  // Utilise l'ID du client comme clé
             }
         } catch (SQLException e) {
             throw new RuntimeException("Erreur lors de la récupération des clients", e);
         }
-        return clients;
+
+        return clientsMap;
     }
+
 
     private Client mapResultSetToClient(ResultSet rs) throws SQLException {
         UUID id = UUID.fromString(rs.getString("id"));

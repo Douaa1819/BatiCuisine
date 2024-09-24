@@ -1,20 +1,14 @@
 package View;
-import Services.impl.DevisServiceImpl;
 import Services.impl.ProjetServiceImpl;
 import Services.interfaces.*;
-import View.Client.ClientView;
 import View.Projet.ProjetView;
-import enums.EtatProjet;
 import models.*;
 import utils.ValidationUtils;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-import static enums.TypeComposant.MAIN_D_OEUVRE;
-import static enums.TypeComposant.MATERIAUX;
+
 
 public class MainGUI {
 

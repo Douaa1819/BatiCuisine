@@ -1,6 +1,5 @@
 package DAO.interfaces;
 
-import models.Client;
 import models.Projet;
 
 import java.sql.SQLException;

@@ -17,6 +17,7 @@ public class MainOeuvreDAOImpl implements MainOeuvreDAO {
         this.connection = DatabaseConnection.getInstance().getConnection();
     }
 
+
     @Override
     public void create(MainOeuvre mainOeuvre) {
         String query = "INSERT INTO MainOeuvre (id, nom, tva, typeComposant, projet_id, tauxHoraire, heuresTravail, productiviteOuvrier) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";

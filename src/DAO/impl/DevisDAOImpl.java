@@ -34,6 +34,7 @@ public class DevisDAOImpl implements DevisDAO {
 
     @Override
     public Optional<Devis> getById(UUID id) throws SQLException {
+
         String sql = "SELECT * FROM Devis WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);

@@ -8,10 +8,12 @@ import utils.ValidationUtils;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
-    public class ClientView {
+public class ClientView {
         private ClientService clientService;
         private DevisService devisService;
         private MateriauxService materiauxService;
@@ -29,21 +31,27 @@ import java.util.UUID;
         System.out.print("Entrez le nom du client : ");
         String nomClient = ValidationUtils.readString();
         List<Client> clientsTrouves = clientService.getClientsByName(nomClient);
+
         if (clientsTrouves.isEmpty()) {
             System.out.println("Aucun client trouvé avec ce nom.");
         } else {
             System.out.println("Client(s) trouvé(s) :");
-            clientsTrouves.forEach(client -> {
-                System.out.println("ID : " + client.getId());
+
+            Map<UUID, Client> clientsMap = clientsTrouves.stream()
+                    .collect(Collectors.toMap(Client::getId, client -> client));
+            clientsMap.forEach((id, client) -> {
+                System.out.println("ID : " + id);
                 System.out.println("Nom : " + client.getNom());
                 System.out.println("Numéro de téléphone : " + client.getPhone());
                 System.out.println();
             });
+        }
 
-            System.out.print("Souhaitez-vous continuer avec l'un de ces clients ? (y/n) : ");
-            String reponse = ValidationUtils.readString();
 
-            if ("y".equalsIgnoreCase(reponse)) {
+        System.out.print("Souhaitez-vous continuer avec l'un de ces clients ? (y/n) : ");
+            boolean reponse = ValidationUtils.readYesNo();
+
+            if (reponse) {
                 System.out.print("Entrez l'ID du client avec lequel continuer : ");
                 String clientIdString = ValidationUtils.readString();
                 UUID clientId = UUID.fromString(clientIdString);
@@ -57,7 +65,7 @@ import java.util.UUID;
                 }, () -> System.out.println("Client non trouvé."));
             }
         }
-    }
+
 
 
 
@@ -89,8 +97,8 @@ import java.util.UUID;
             System.out.println("ID: " + createdClient.getId());
 
             System.out.print("Souhaitez-vous continuer avec ce client ? (y/n) : ");
-            String reponse = ValidationUtils.readString();
-            if ("y".equalsIgnoreCase(reponse)) {
+            boolean reponse = ValidationUtils.readYesNo();
+            if (reponse) {
                 ProjetView projetView = new ProjetView(clientService, materiauxService, mainOeuvreService, devisService);
                projetView.creerProjetPourClient(createdClient.getId());
             }
@@ -100,18 +108,23 @@ import java.util.UUID;
         }
     }
 
-    public  void afficherClients() {
+    public void afficherClients() {
         System.out.println("\n--- Affichage des clients ---");
-        List<Client> clients = clientService.getAllClients();
+
+        Map<UUID, Client> clients = clientService.getAllClients();
+
         if (clients.isEmpty()) {
             System.out.println("Aucun client trouvé.");
         } else {
-            for (Client client : clients) {
-                System.out.println("- Nom: " + client.getNom());
+            for (Map.Entry<UUID, Client> entry : clients.entrySet()) {
+                Client client = entry.getValue();
+//                System.out.println("- ID: " + entry.getKey());
+                System.out.println(" -Nom: " + client.getNom());
                 System.out.println();
             }
         }
     }
+
 
 
 

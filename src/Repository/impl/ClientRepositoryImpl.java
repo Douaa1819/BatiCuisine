@@ -6,6 +6,7 @@ import models.Client;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class ClientRepositoryImpl  implements ClientRepository {
     }
 
     @Override
-    public List<Client> findAll() {
+    public Map<UUID, Client> findAll() {
         return clientDAO.getAllClient();
     }
 

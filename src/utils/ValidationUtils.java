@@ -133,10 +133,28 @@ public class ValidationUtils {
         while (true) {
             String dateStr = scanner.nextLine();
             try {
-                return LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                if (date.isBefore(LocalDate.now())) {
+                    System.out.println("Erreur : la date ne peut pas être dans le passé. Veuillez entrer une date future (format : jj/mm/aaaa) : ");
+                    continue;
+                }
+                return date;
             } catch (DateTimeParseException e) {
                 System.out.println("Erreur : format de date invalide. Veuillez réessayer (format : jj/mm/aaaa) : ");
             }
+        }
+    }
+
+
+    public static boolean readYesNo() {
+        while (true) {
+            String input = scanner.nextLine().trim().toLowerCase();
+            if (input.equals("y")) {
+                return true;
+            } else if (input.equals("n")) {
+                return false;
+            }
+            System.out.println("Erreur : entrée invalide. Veuillez réessayer.");
         }
     }
 

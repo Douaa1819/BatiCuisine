@@ -5,10 +5,7 @@ import Services.interfaces.ClientService;
 import models.Client;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class ClientServiceImpl implements ClientService {
 
@@ -29,7 +26,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<Client> getAllClients() {
+    public Map<UUID, Client> getAllClients() {
         return clientRepository.findAll();
     }
 

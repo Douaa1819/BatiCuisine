@@ -4,7 +4,6 @@ import Services.impl.ProjetServiceImpl;
 import Services.interfaces.*;
 import View.Client.ClientView;
 import View.Composant.ComposantView;
-import View.MainGUI;
 import enums.EtatProjet;
 import models.*;
 import utils.ValidationUtils;
@@ -13,6 +12,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static View.MainGUI.afficherMenuPrincipal;
 
 public class ProjetView {
 
@@ -63,8 +65,8 @@ public class ProjetView {
     }
 
 
-
     public  void creerProjetPourClient(UUID clientId) throws SQLException {
+
         System.out.println("\n--- Création d'un Nouveau Projet ---");
 
         System.out.println("Entrez le nom du projet : ");
@@ -98,18 +100,18 @@ public class ProjetView {
         System.out.println("\n--- Calcul du coût total ---");
 
         System.out.print("Souhaitez-vous appliquer une TVA au projet ? (y/n) : ");
-        String reponseTVA = ValidationUtils.readString();
-        if ("y".equalsIgnoreCase(reponseTVA)) {
+        boolean reponseTVA = ValidationUtils.readYesNo();
+        if (reponseTVA) {
             System.out.print("Entrez le pourcentage de TVA (%) : ");
             double tva = ValidationUtils.readDouble();
             projet.setTva(tva);
         }
 
         System.out.print("Souhaitez-vous appliquer une marge bénéficiaire au projet ? (y/n) : ");
-        String reponseMarge = ValidationUtils.readValidName();
+        boolean reponseMarge = ValidationUtils.readYesNo();
 
 
-        if ("y".equalsIgnoreCase(reponseMarge)) {
+        if (reponseMarge) {
             System.out.print("Entrez le pourcentage de marge bénéficiaire (%) : ");
             double margeBeneficiaire = ValidationUtils.readDouble();
             projet.setMargeBeneficiaire(margeBeneficiaire);
@@ -127,11 +129,13 @@ public class ProjetView {
 
 
         // Résultat du Calcul
+
         System.out.println("\n--- Résultat du Calcul ---");
+
         System.out.println("Nom du projet : " + projet.getNomProjet());
         System.out.println("Client : " + clientNom);
         System.out.println("Surface : " + projet.getSurface() + " m²");
-
+        System.out.printf("");
 
         List<Materiaux> materiauxList = materiauxService.getMateriauxByProjetId(projet.getId());
         List<MainOeuvre> mainOeuvreList = mainOeuvreService.getMainOeuvreByProjetId(projet.getId());
@@ -144,13 +148,13 @@ public class ProjetView {
             coutTotalMateriau *= materiaux.getCoefficientQualite();
             coutMateriaux += coutTotalMateriau;
 
-            System.out.printf("- %s : %.2f € (quantité : %.2f, coût unitaire : %.2f €, qualité : %.2f, transport : %.2f €)%n",
-                    materiaux.getNom(),
-                    coutTotalMateriau,
-                    materiaux.getQuantite(),
-                    materiaux.getCoutUnitaire(),
-                    materiaux.getCoefficientQualite(),
-                    materiaux.getCoutTransport());
+         System.out.printf("- %s : %.2f € (quantité : %.2f, coût unitaire : %.2f €, qualité : %.2f, transport : %.2f €)%n",
+                        materiaux.getNom(),
+                        coutTotalMateriau,
+                        materiaux.getQuantite(),
+                        materiaux.getCoutUnitaire(),
+                        materiaux.getCoefficientQualite(),
+                        materiaux.getCoutTransport());
         }
 
         // Add TVA if applicable
@@ -158,9 +162,10 @@ public class ProjetView {
             if (projet.getTva() > 0) {
                 coutMateriauxAvecTVA += coutMateriaux * (projet.getTva() / 100);
             }
-
+             System.out.printf("");
             System.out.printf("**Coût total des matériaux avant TVA : %.2f €**%n", coutMateriaux);
             System.out.printf("**Coût total des matériaux avec TVA (%.2f%%) : %.2f €**%n", projet.getTva(), coutMateriauxAvecTVA);
+            System.out.printf("");
 
             double coutMainOeuvre = 0.0;
 
@@ -170,7 +175,7 @@ public class ProjetView {
                 double coutTotalMainOeuvre = mainOeuvre.getTauxHoraire() * mainOeuvre.getHeuresTravail();
                 coutTotalMainOeuvre *= mainOeuvre.getProductiviteOuvrier();
                 coutMainOeuvre += coutTotalMainOeuvre;
-
+                System.out.printf("");
                 System.out.printf("- %s : %.2f € (taux horaire : %.2f €, heures travaillées : %.2f h, productivité : %.2f)%n",
                         mainOeuvre.getNom(),
                         coutTotalMainOeuvre,
@@ -184,10 +189,11 @@ public class ProjetView {
         if (projet.getTva() > 0) {
             coutMainOeuvreAvecTVA += coutMainOeuvre * (projet.getTva() / 100);
         }
-
+        System.out.printf("");
         System.out.printf("**Coût total de la main-d'œuvre avant TVA : %.2f €**%n", coutMainOeuvre);
         System.out.printf("**Coût total de la main-d'œuvre avec TVA (%.2f%%) : %.2f €**%n", projet.getTva(), coutMainOeuvreAvecTVA);
-
+        System.out.printf("");
+        System.out.printf("");
 
         double coutTotalAvantMarge = coutMateriauxAvecTVA + coutMainOeuvreAvecTVA;
         System.out.printf("3. Coût total avant marge : %.2f €%n", coutTotalAvantMarge);
@@ -196,9 +202,11 @@ public class ProjetView {
         if (projet.getMargeBeneficiaire() > 0) {
             margeBeneficiaire = coutTotalAvantMarge * (projet.getMargeBeneficiaire() / 100);
         }
-
+        System.out.printf("");
+        System.out.printf("");
         System.out.printf("4. Marge bénéficiaire (%.2f%%) : %.2f €%n", projet.getMargeBeneficiaire(), margeBeneficiaire);
-
+        System.out.printf("");
+        System.out.printf("");
         double coutTotalFinal = coutTotalAvantMarge + margeBeneficiaire;
         System.out.printf("**Coût total final du projet : %.2f €**%n", coutTotalFinal);
 
@@ -210,7 +218,14 @@ public class ProjetView {
         } catch (SQLException e) {
             System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
         }
-        enregistrerDevis(projet);
+        System.out.print("Souhaitez-vous enregistrer ce devis ? (y/n) : ");
+        boolean reponseEnregistrer = ValidationUtils.readYesNo();
+        if (reponseEnregistrer) {
+            enregistrerDevis(projet);
+        }else {
+            System.out.println("Devis non enregistré. Retour au menu principal...");
+            afficherMenuPrincipal();
+        }
     }
 
 
@@ -250,7 +265,7 @@ public class ProjetView {
             System.out.println("Erreur lors de la mise à jour du projet : " + e.getMessage());
         }
 
-        MainGUI.afficherMenuPrincipal();
+        afficherMenuPrincipal();
     }
 
     public void choisirNomEtCalculerCoutTotal(List<Projet> projets) throws SQLException {
@@ -260,9 +275,8 @@ public class ProjetView {
         }
 
         System.out.println("--- Choisissez un projet ---");
-        for (int i = 0; i < projets.size(); i++) {
-            System.out.printf("%d. %s%n", i + 1, projets.get(i).getNomProjet());
-        }
+        IntStream.range(0, projets.size())
+                .forEach(i -> System.out.printf("%d. %s%n", i + 1, projets.get(i).getNomProjet()));
 
         System.out.print("Entrez le numéro du projet : ");
         int choix = ValidationUtils.readInt();
@@ -275,7 +289,7 @@ public class ProjetView {
         Projet projetChoisi = projets.get(choix - 1);
         System.out.println("Vous avez choisi le projet : " + projetChoisi.getNomProjet());
 
-        enregistrerDevis(projetChoisi);
+       calculerCoutTotal(projetChoisi);
     }
 
     public void afficherProjetsExistants() {
