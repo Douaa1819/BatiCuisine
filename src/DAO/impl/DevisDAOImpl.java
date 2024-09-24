@@ -32,22 +32,24 @@ public class DevisDAOImpl implements DevisDAO {
         }
     }
 
-    @Override
-    public Optional<Devis> getById(UUID id) throws SQLException {
 
-        String sql = "SELECT * FROM Devis WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                Devis devis = new Devis(
-                        (UUID) resultSet.getObject("id"),
-                        resultSet.getDate("dateEmission").toLocalDate(),
-                        resultSet.getDate("dateValidee").toLocalDate(),
-                        resultSet.getBoolean("accepte"),
-                        (UUID) resultSet.getObject("projet_id")
-                );
-                return Optional.of(devis);
+
+    @Override
+    public Optional<Devis> getDevisByProjetId(UUID projetId) throws SQLException {
+        String sql = "SELECT * FROM devis WHERE projet_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, projetId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Devis devis = new Devis(
+                            UUID.fromString(rs.getString("id")),
+                            rs.getDate("dateEmission").toLocalDate(),
+                            rs.getDate("dateValidee").toLocalDate(),
+                            rs.getBoolean("accepte"),
+                            projetId
+                    );
+                    return Optional.of(devis);
+                }
             }
         }
         return Optional.empty();

@@ -231,6 +231,12 @@ public class ProjetView {
 
 
     private  void enregistrerDevis(Projet projet) throws SQLException {
+
+        Optional<Devis> devisExistant = devisService.getDevisByProjetId(projet.getId());
+
+        if (devisExistant.isPresent()) {
+            System.out.println("Le projet a déjà un devis associé.");
+        } else {
         Scanner scanner = new Scanner(System.in);
         System.out.println("--- Enregistrement du Devis ---");
 
@@ -266,6 +272,7 @@ public class ProjetView {
         }
 
         afficherMenuPrincipal();
+    }
     }
 
     public void choisirNomEtCalculerCoutTotal(List<Projet> projets) throws SQLException {

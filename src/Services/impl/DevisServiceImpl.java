@@ -4,6 +4,7 @@ import Repository.interfaces.DevisRepository;
 import Services.interfaces.DevisService;
 import models.Devis;
 
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,8 +20,8 @@ public class DevisServiceImpl implements DevisService {
         devisRepository.save(devis);
     }
 
-    @Override
-    public Optional<Devis> getById(UUID id) {
-        return devisRepository.getById(id);
+
+    public Optional<Devis> getDevisByProjetId(UUID projetId) throws SQLException {
+        return devisRepository.findByProjetId(projetId);
     }
 }

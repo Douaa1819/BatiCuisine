@@ -25,13 +25,10 @@ public class DevisRepositoryImpl implements DevisRepository {
         }
     }
 
+
+
     @Override
-    public Optional<Devis> getById(UUID id) {
-        try {
-            return devisDAO.getById(id);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Optional<Devis> findByProjetId(UUID projetId) throws SQLException {
+        return devisDAO.getDevisByProjetId(projetId);
     }
 }

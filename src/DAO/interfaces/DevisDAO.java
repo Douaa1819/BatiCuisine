@@ -8,6 +8,6 @@ import java.util.UUID;
 
 public interface DevisDAO {
     void save(Devis devis) throws SQLException;
-    Optional<Devis> getById(UUID id) throws SQLException;
+    Optional<Devis> getDevisByProjetId(UUID projetId) throws SQLException;
 
 }
