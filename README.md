@@ -26,6 +26,14 @@ git clone https://github.com/Douaa1819/BatiCuisine.git
 ## 📝 Licence
 Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
 
+## 📚 Exemple d'utilisation
+
+=== Bienvenue dans BatiCuisine ===
+1. Créer un nouveau projet
+2. Afficher les projets existants
+3. Calculer le coût d'un projet
+4. Quitter
+   
 ## 📅 Planification
 Pour suivre la planification et les tâches en cours, veuillez consulter notre tableau de bord Jira : [Planification BatiCuisine](https://douaa123.atlassian.net/jira/software/c/projects/BC/boards/8/backlog)
 
