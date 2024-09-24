@@ -26,7 +26,7 @@ git clone https://github.com/Douaa1819/BatiCuisine.git
 2-Naviguer vers le répertoire de sortie :
 cd Bati-Cuisine/out/artifacts/Bati_Cuisine_jar
 
-3-Exécuter le fichier .jar
+3-Exécuter le fichier .jar :
 java -jar Bati-Cuisine.jar
 
 ## 📝 Licence
