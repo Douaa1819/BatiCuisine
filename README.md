@@ -26,14 +26,14 @@ Le projet suit une architecture basée sur le modèle DAO (Data Access Object) p
 1. DAO (Data Access Object)
 La couche DAO est responsable de la gestion des données et de la persistance des objets métiers. Elle s'occupe de l'accès aux données et de la manipulation des entités de base comme les projets, les clients, les matériaux, etc.
 
-2. Repository
-3. 
+2. Repository 
 Le Repository permet de centraliser les accès aux données en encapsulant la logique des requêtes SQL ou ORM. Il sert d'intermédiaire entre la couche DAO et le reste de l'application.
 
-4. Service
+3. Service
 La couche Service contient la logique métier de l'application. Elle orchestre les appels aux DAO et aux repositories pour répondre aux besoins de l'application tout en respectant les règles de gestion.
 
-📂 Contenu de l'application
+
+## 📂 Contenu de l'application
 
 1. Gestion des Projets 🏠
 Ajouter un client : Associe un client à un projet.
