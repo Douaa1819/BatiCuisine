@@ -47,5 +47,6 @@ Pour suivre la planification et les tâches en cours, veuillez consulter notre t
 Pour une présentation complète du projet, consultez : [Présentation BatiCuisine](https://www.canva.com/design/DAGRluMyKHQ/zxiKguEgDM12ZpsvVe3QtQ/edit?utm_content=DAGRluMyKHQ&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ##  Diagramme de Class
-<img width="907" alt="image" src="https://github.com/user-attachments/assets/3badcfe3-ce75-4a7f-b4eb-34310a83305d">
+<img width="822" alt="image" src="https://github.com/user-attachments/assets/0b245d91-0ed3-4003-8642-58556dc37981">
+
 
