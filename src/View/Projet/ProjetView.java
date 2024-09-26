@@ -144,8 +144,7 @@ public class ProjetView {
         System.out.println("--- Détail des Coûts ---");
         System.out.println("1. Matériaux :");
         for (Materiaux materiaux : materiauxList) {
-            double coutTotalMateriau = (materiaux.getCoutUnitaire() * materiaux.getQuantite()) + materiaux.getCoutTransport();
-            coutTotalMateriau *= materiaux.getCoefficientQualite();
+            double coutTotalMateriau = (materiaux.getCoutUnitaire() * materiaux.getQuantite() * materiaux.getCoefficientQualite()) + materiaux.getCoutTransport();
             coutMateriaux += coutTotalMateriau;
 
          System.out.printf("- %s : %.2f € (quantité : %.2f, coût unitaire : %.2f €, qualité : %.2f, transport : %.2f €)%n",
@@ -162,20 +161,19 @@ public class ProjetView {
             if (projet.getTva() > 0) {
                 coutMateriauxAvecTVA += coutMateriaux * (projet.getTva() / 100);
             }
-             System.out.printf("");
+             System.out.printf("   ");
             System.out.printf("**Coût total des matériaux avant TVA : %.2f €**%n", coutMateriaux);
             System.out.printf("**Coût total des matériaux avec TVA (%.2f%%) : %.2f €**%n", projet.getTva(), coutMateriauxAvecTVA);
-            System.out.printf("");
+            System.out.printf("   ");
 
             double coutMainOeuvre = 0.0;
 
 
             System.out.println("2. Main-d'œuvre :");
             for (MainOeuvre mainOeuvre : mainOeuvreList) {
-                double coutTotalMainOeuvre = mainOeuvre.getTauxHoraire() * mainOeuvre.getHeuresTravail();
-                coutTotalMainOeuvre *= mainOeuvre.getProductiviteOuvrier();
+                double coutTotalMainOeuvre = mainOeuvre.getTauxHoraire() * mainOeuvre.getHeuresTravail() * mainOeuvre.getProductiviteOuvrier();
                 coutMainOeuvre += coutTotalMainOeuvre;
-                System.out.printf("");
+                System.out.printf("   ");
                 System.out.printf("- %s : %.2f € (taux horaire : %.2f €, heures travaillées : %.2f h, productivité : %.2f)%n",
                         mainOeuvre.getNom(),
                         coutTotalMainOeuvre,
@@ -189,11 +187,11 @@ public class ProjetView {
         if (projet.getTva() > 0) {
             coutMainOeuvreAvecTVA += coutMainOeuvre * (projet.getTva() / 100);
         }
-        System.out.printf("");
+        System.out.printf("  ");
         System.out.printf("**Coût total de la main-d'œuvre avant TVA : %.2f €**%n", coutMainOeuvre);
         System.out.printf("**Coût total de la main-d'œuvre avec TVA (%.2f%%) : %.2f €**%n", projet.getTva(), coutMainOeuvreAvecTVA);
-        System.out.printf("");
-        System.out.printf("");
+        System.out.printf("  ");
+        System.out.printf("  ");
 
         double coutTotalAvantMarge = coutMateriauxAvecTVA + coutMainOeuvreAvecTVA;
         System.out.printf("3. Coût total avant marge : %.2f €%n", coutTotalAvantMarge);
@@ -202,11 +200,11 @@ public class ProjetView {
         if (projet.getMargeBeneficiaire() > 0) {
             margeBeneficiaire = coutTotalAvantMarge * (projet.getMargeBeneficiaire() / 100);
         }
-        System.out.printf("");
-        System.out.printf("");
+        System.out.printf("  ");
+        System.out.printf("  ");
         System.out.printf("4. Marge bénéficiaire (%.2f%%) : %.2f €%n", projet.getMargeBeneficiaire(), margeBeneficiaire);
-        System.out.printf("");
-        System.out.printf("");
+        System.out.printf("  ");
+        System.out.printf("    ");
         double coutTotalFinal = coutTotalAvantMarge + margeBeneficiaire;
         System.out.printf("**Coût total final du projet : %.2f €**%n", coutTotalFinal);
 

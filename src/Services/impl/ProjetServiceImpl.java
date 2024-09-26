@@ -3,6 +3,7 @@ package Services.impl;
 import Repository.impl.ProjetRepositoryImpl;
 import Repository.interfaces.ProjetRepository;
 import Services.interfaces.ProjetService;
+import models.Composant;
 import models.Projet;
 
 import java.sql.SQLException;
@@ -31,6 +32,17 @@ public class ProjetServiceImpl implements ProjetService {
     public List<Projet> getAllProjets() throws SQLException {
         return projetRepository.findAll();
     }
+
+    public List <String> getNomComposant(Projet projet) throws SQLException {
+
+        List <Composant> nomComposant =;
+     projets.stream().map(p->p).
+
+
+    }
+
+
+
     @Override
     public void mettreAJourProjet(Projet projet) throws SQLException {
         projetRepository.update(projet);
